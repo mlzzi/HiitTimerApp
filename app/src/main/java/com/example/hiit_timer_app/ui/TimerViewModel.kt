@@ -6,29 +6,37 @@ import kotlinx.coroutines.flow.StateFlow
 
 class TimerViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TimerUiState(
-        timeActive = 1000L,
-        timeRest = 2000L,
-        rounds = 6,
-        sound = true,
-        vibrate = true,
-        countDown = true
-    ))
+    private val _uiState = MutableStateFlow(
+        TimerUiState(
+            timeActive = 120L,
+            timeRest = 240L,
+            rounds = 6,
+            sound = true,
+            vibrate = false,
+            countDown = true
+        )
+    )
     val uiState: StateFlow<TimerUiState> = _uiState
 
-    init {
-        initializeUiState()
+    fun updateSoundEnabled(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(sound = enabled)
     }
 
-    private fun initializeUiState() {
-        _uiState.value =
-            TimerUiState(
-                timeActive = 1000L,
-                timeRest = 2000L,
-                rounds = 6,
-                sound = true,
-                vibrate = true,
-                countDown = true
-            )
+    fun updateVibrateEnabled(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(vibrate = enabled)
+    }
+
+    fun updateCountdownEnabled(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(countDown = enabled)
+    }
+
+    fun updateActiveTime(time: Long) {
+        _uiState.value.timeActive = time
+    }
+
+    fun formatTime(timeInSeconds: Long): String {
+        val minutes = timeInSeconds / 60
+        val seconds = timeInSeconds % 60
+        return "%02d:%02d".format(minutes, seconds)
     }
 }
