@@ -8,8 +8,8 @@ class TimerViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         TimerUiState(
-            timeActive = 120L,
-            timeRest = 240L,
+            timeActive = 20L,
+            timeRest = 100L,
             rounds = 6,
             sound = true,
             vibrate = false,
@@ -18,6 +18,13 @@ class TimerViewModel : ViewModel() {
     )
     val uiState: StateFlow<TimerUiState> = _uiState
 
+    fun updateTimeActive(time: Long) {
+        _uiState.value = _uiState.value.copy(timeActive = time)
+    }
+
+    fun updateTimeRest(time: Long) {
+        _uiState.value = _uiState.value.copy(timeRest = time)
+    }
     fun updateSoundEnabled(enabled: Boolean) {
         _uiState.value = _uiState.value.copy(sound = enabled)
     }
@@ -28,10 +35,6 @@ class TimerViewModel : ViewModel() {
 
     fun updateCountdownEnabled(enabled: Boolean) {
         _uiState.value = _uiState.value.copy(countDown = enabled)
-    }
-
-    fun updateActiveTime(time: Long) {
-        _uiState.value.timeActive = time
     }
 
     fun formatTime(timeInSeconds: Long): String {

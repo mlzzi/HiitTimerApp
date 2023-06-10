@@ -56,11 +56,22 @@ fun TimerApp(modifier: Modifier = Modifier) {
             )
         }
         composable("timer screen") {
-            TimerScreen()
+            TimerScreen(timerUiState)
         }
     }
 }
 
+@Composable
+fun HomeScreenHeader(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Text(text = "Hi!")
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +92,8 @@ fun TimerHomeScreen(
         },
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding().navigationBarsPadding()
+            .statusBarsPadding()
+            .navigationBarsPadding()
         ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -90,7 +102,7 @@ fun TimerHomeScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            SetTimer(
+            TimerConfiguration(
                 timerUiState = timerUiState,
                 viewModel = viewModel
             )
@@ -108,218 +120,4 @@ fun TimerHomeScreen(
         }
     }
 
-}
-
-@Composable
-fun SetTimer(
-    timerUiState: TimerUiState,
-    viewModel: TimerViewModel,
-    modifier: Modifier = Modifier
-) {
-    var showActiveDialog by remember { mutableStateOf(false) }
-    var showRestDialog by remember { mutableStateOf(false) }
-
-    Column {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Active",
-                modifier = Modifier.align(Alignment.CenterVertically),
-                fontSize = 24.sp
-            )
-            TextButton(onClick = { showActiveDialog = true }) {
-                Text(
-                    text = viewModel.formatTime(timerUiState.timeActive),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    fontSize = 24.sp
-                )
-            }
-            TimePickerDialog(
-                showDialog = showActiveDialog,
-                onDismiss = { showActiveDialog = false },
-                onSave = { time -> timerUiState.timeActive = time },
-                minutesInput = timerUiState.timeActive / 60,
-                secondsInput = timerUiState.timeActive % 60
-            )
-        }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Rest",
-                modifier = Modifier.align(Alignment.CenterVertically),
-                fontSize = 24.sp
-            )
-            TextButton(onClick = { showRestDialog = true }) {
-                Text(
-                    text = viewModel.formatTime(timerUiState.timeRest),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    fontSize = 24.sp
-                )
-            }
-            TimePickerDialog(
-                showDialog = showRestDialog,
-                onDismiss = { showRestDialog = false },
-                onSave = { time -> timerUiState.timeRest = time },
-                minutesInput = timerUiState.timeRest / 60,
-                secondsInput = timerUiState.timeRest % 60
-            )
-        }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Sound",
-                modifier = Modifier.align(Alignment.CenterVertically),
-                fontSize = 24.sp
-            )
-            Switch(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .semantics { contentDescription = "Demo" },
-                checked = timerUiState.sound,
-                onCheckedChange = { checked ->
-                    viewModel.updateSoundEnabled(checked)
-                }
-            )
-        }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Vibrate",
-                modifier = Modifier.align(Alignment.CenterVertically),
-                fontSize = 24.sp
-            )
-            Switch(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .semantics { contentDescription = "Demo" },
-                checked = timerUiState.vibrate,
-                onCheckedChange = { checked ->
-                    viewModel.updateVibrateEnabled(checked)
-                }
-            )
-        }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Countdown",
-                modifier = Modifier.align(Alignment.CenterVertically),
-                fontSize = 24.sp
-            )
-            Switch(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .semantics { contentDescription = "Demo" },
-                checked = timerUiState.countDown,
-                onCheckedChange = { checked ->
-                    viewModel.updateCountdownEnabled(checked)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun HomeScreenHeader(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Text(text = "Hi!")
-    }
-}
-
-@Composable
-fun TimePickerDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onSave: (Long) -> Unit,
-    minutesInput: Long,
-    secondsInput: Long
-) {
-    if (showDialog) {
-        var minutes = minutesInput
-        var seconds = secondsInput
-
-        Dialog(onDismissRequest = onDismiss) {
-            AlertDialog(
-                onDismissRequest = onDismiss,
-                title = { Text(text = "Set Time") },
-                text = {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            NumberPicker(
-                                value = minutes,
-                                onValueChange = { minutes = it * 60},
-                                minValue = 0,
-                                maxValue = 59
-                            )
-                            Text(text = ":", modifier = Modifier.padding(horizontal = 8.dp))
-                            NumberPicker(
-                                value = seconds,
-                                onValueChange = { seconds = it },
-                                minValue = 0,
-                                maxValue = 59
-                            )
-                        }
-                    }
-                },
-                confirmButton = {
-                    Button(onClick = {
-                        val time = minutes + seconds
-                        onSave(time)
-                        onDismiss()
-                    }) {
-                        Text(text = "Save")
-                    }
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun NumberPicker(
-    value: Long,
-    onValueChange: (Long) -> Unit,
-    minValue: Int,
-    maxValue: Int
-) {
-    var number by remember { mutableLongStateOf(value) }
-
-    Column {
-        Button(onClick = { if (number > minValue) number -= 1 }) {
-            Text(text = "-", textAlign = TextAlign.Center)
-        }
-
-        Text(
-            text = number.toString().padStart(2, '0'),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = 4.dp)
-        )
-
-        Button(onClick = { if (number < maxValue) number += 1 }) {
-            Text(text = "+", textAlign = TextAlign.Center)
-        }
-    }
-
-    LaunchedEffect(number) {
-        onValueChange(number)
-    }
-}
-
-@Composable
-fun TimerScreen() {
-    Text("screen 2")
 }
