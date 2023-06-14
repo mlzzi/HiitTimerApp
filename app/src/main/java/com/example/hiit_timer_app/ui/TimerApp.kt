@@ -56,7 +56,7 @@ fun TimerApp(modifier: Modifier = Modifier) {
             )
         }
         composable("timer screen") {
-            TimerScreen(timerUiState)
+            TimerScreen(timerUiState, viewModel)
         }
     }
 }

@@ -36,10 +36,4 @@ class TimerViewModel : ViewModel() {
     fun updateCountdownEnabled(enabled: Boolean) {
         _uiState.value = _uiState.value.copy(countDown = enabled)
     }
-
-    fun formatTime(timeInSeconds: Long): String {
-        val minutes = timeInSeconds / 60
-        val seconds = timeInSeconds % 60
-        return "%02d:%02d".format(minutes, seconds)
-    }
 }
