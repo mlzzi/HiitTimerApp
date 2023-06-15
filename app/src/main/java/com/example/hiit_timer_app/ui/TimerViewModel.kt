@@ -8,8 +8,8 @@ class TimerViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         TimerUiState(
-            timeActive = 20L,
-            timeRest = 100L,
+            timeActive = 5L,
+            timeRest = 10L,
             rounds = 6,
             sound = true,
             vibrate = false,
