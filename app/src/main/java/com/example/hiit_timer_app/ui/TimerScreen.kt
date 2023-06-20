@@ -1,6 +1,5 @@
 package com.example.hiit_timer_app.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -12,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PauseCircle
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.util.TimerUtil
 import kotlinx.coroutines.delay
 
+// Composable that renders TimerScreen
 @Composable
 fun TimerScreen(
     timerUiState: TimerUiState,
@@ -47,29 +50,43 @@ fun TimerScreen(
             .fillMaxSize()
             .fillMaxSize()
     ) {
-        var countdown by remember { mutableStateOf(true) }
+        // keep track of the countdown state
+        var countdown by remember { mutableStateOf(timerUiState.countDown) }
+        //keep track of the timer running state
+        var isTimerRunning by remember { mutableStateOf(false) }
 
         Box(
             contentAlignment = Alignment.Center
         ) {
+            // Render the active timer animation
             SpinAnimation(
                 totalTime = timerUiState.timeActive,
                 onTimerChange = { time -> viewModel.updateTimeActive(time) },
                 color = Color.Magenta,
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(200.dp),
+                isTimerRunning = isTimerRunning,
+                setTimerRunning = { isTimerRunning = it }
             )
 
+            // Render the rest timer animation if the active timer is finished
             if (timerUiState.timeActive == 0L) {
                 SpinAnimation(
                     totalTime = timerUiState.timeRest,
                     onTimerChange = { time -> viewModel.updateTimeRest(time) },
                     color = Color.Cyan,
-                    modifier = Modifier.size(200.dp)
+                    modifier = Modifier.size(200.dp),
+                    isTimerRunning = isTimerRunning,
+                    setTimerRunning = { isTimerRunning = it }
                 )
             }
+            // Render countdown if is on, or the timer text if countdown is off
             if (countdown) {
-                AnimationFadeOut(onCountDown = { countdown = it })
+                AnimationCountDown(
+                    onCountDown = { countdown = it },
+                    onTimerRunningChange = { isTimerRunning = it }
+                )
             } else {
+                // Render the formatted time based on the active or rest timer
                 Text(
                     text = if (timerUiState.timeActive > 0L) {
                         TimerUtil.formatTime(timerUiState.timeActive)
@@ -85,36 +102,45 @@ fun TimerScreen(
     }
 }
 
+// Animation for when the Countdown is On
 @Composable
-fun AnimationFadeOut(
-    onCountDown: (Boolean) -> Unit
+fun AnimationCountDown(
+    onCountDown: (Boolean) -> Unit,
+    onTimerRunningChange: (Boolean) -> Unit
 ) {
     Column() {
+        // Count down that goes from 3 to 1
         var count by remember { mutableIntStateOf(3) }
 
         LaunchedEffect(key1 = count) {
-            while (count > 0) {
+            if (count > 0) {
                 delay(1000)
                 count--
+            } else if (count == 0) {
+                // Starts the timer animation after countdown
+                onTimerRunningChange(true)
+                onCountDown(false)
             }
         }
         AnimatedContent(targetState = count) { targetCount ->
             if (count > 0) {
+                // Displays the countdown value
                 Text(
                     text = "$targetCount",
                     fontSize = 96.sp,
                     color = Color.White
                 )
-            } else {
-                onCountDown(false)
             }
         }
     }
 }
 
+// Function responsible for the timer and spin animation
 @Composable
 fun SpinAnimation(
     onTimerChange: (Long) -> Unit,
+    setTimerRunning: (Boolean) -> Unit,
+    isTimerRunning: Boolean,
     totalTime: Long,
     color: Color,
     modifier: Modifier = Modifier
@@ -122,7 +148,6 @@ fun SpinAnimation(
     val initialValue by remember { mutableLongStateOf(totalTime) }
     var currentTime by remember { mutableLongStateOf(totalTime) }
     var progress by remember { mutableFloatStateOf(1f) }
-    var isTimerRunning by remember { mutableStateOf(false) }
 
     val progressAnimate by animateFloatAsState(
         targetValue = progress,
@@ -131,6 +156,7 @@ fun SpinAnimation(
             easing = LinearEasing
         )
     )
+    // Circular animation of the timer
     CircularProgressIndicator(
         progress = 1f,
         modifier = Modifier.size(size = 300.dp),
@@ -138,6 +164,7 @@ fun SpinAnimation(
         strokeWidth = 10.dp,
         strokeCap = StrokeCap.Round,
     )
+    // Grey background of the indicator
     CircularProgressIndicator(
         progress = progressAnimate,
         modifier = Modifier.size(size = 300.dp),
@@ -160,20 +187,27 @@ fun SpinAnimation(
     // add space between indicator and button
     Spacer(modifier = Modifier.height(height = 16.dp))
 
-    Button(
+    // Button that stops and play the timer and the spin animation
+    IconButton(
         onClick = {
-            isTimerRunning = !isTimerRunning
+            setTimerRunning(!isTimerRunning)
             progress = totalTime / initialValue.toFloat()
-            Log.d("Test For Animation", "My variable value: $progress")
-            Log.d("Test For Animation", "My variable value: $initialValue")
-            Log.d("Test For Animation", "My variable value: $currentTime")
         },
         modifier = Modifier.padding(top = 400.dp),
-        colors = ButtonDefaults.buttonColors(Color.Magenta)
     ) {
-        Text(
-            text = "Go",
-            color = Color.White
+        Icon(
+            imageVector = if (isTimerRunning) {
+                Icons.Outlined.PauseCircle
+            } else {
+                Icons.Outlined.PlayCircle
+            },
+            contentDescription = "",
+            tint = if (isTimerRunning) {
+                Color.Magenta
+            } else {
+                   Color.White
+                   },
+            modifier = modifier.size(50.dp)
         )
     }
 }
