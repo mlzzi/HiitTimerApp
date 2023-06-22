@@ -6,5 +6,5 @@ data class TimerUiState(
     var rounds: Int,
     var sound: Boolean,
     var vibrate: Boolean,
-    var countDown: Boolean
+    var countdown: Boolean
 )

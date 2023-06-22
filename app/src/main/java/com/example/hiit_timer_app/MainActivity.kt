@@ -26,7 +26,7 @@ fun TimerAppPreview() {
         rounds = 6,
         sound = false,
         vibrate = true,
-        countDown = true
+        countdown = true
     )
     TimerApp()
 }

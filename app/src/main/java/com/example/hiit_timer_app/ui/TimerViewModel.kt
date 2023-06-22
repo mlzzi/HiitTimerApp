@@ -13,7 +13,7 @@ class TimerViewModel : ViewModel() {
             rounds = 6,
             sound = true,
             vibrate = false,
-            countDown = true
+            countdown = false
         )
     )
     val uiState: StateFlow<TimerUiState> = _uiState
@@ -34,6 +34,6 @@ class TimerViewModel : ViewModel() {
     }
 
     fun updateCountdownEnabled(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(countDown = enabled)
+        _uiState.value = _uiState.value.copy(countdown = enabled)
     }
 }

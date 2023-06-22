@@ -51,9 +51,9 @@ fun TimerScreen(
             .fillMaxSize()
     ) {
         // keep track of the countdown state
-        var countdown by remember { mutableStateOf(timerUiState.countDown) }
+        var countdown by remember { mutableStateOf(timerUiState.countdown) }
         //keep track of the timer running state
-        var isTimerRunning by remember { mutableStateOf(false) }
+        var isTimerRunning by remember { mutableStateOf(!countdown) }
 
         Box(
             contentAlignment = Alignment.Center
@@ -205,8 +205,8 @@ fun SpinAnimation(
             tint = if (isTimerRunning) {
                 Color.Magenta
             } else {
-                   Color.White
-                   },
+                Color.White
+            },
             modifier = modifier.size(50.dp)
         )
     }

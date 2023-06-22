@@ -52,7 +52,7 @@ fun TimerConfiguration(
         )
         SetSwitch(
             text = "Countdown",
-            soundState = timerUiState.countDown,
+            soundState = timerUiState.countdown,
             onChangeSwitch = { switch -> viewModel.updateCountdownEnabled(switch) }
         )
     }
