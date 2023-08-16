@@ -12,7 +12,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TimerApp()
+            TimerApp(
+                TimerUiState(
+                    timeActive = 5L,
+                    timeRest = 10L,
+                    progress = 1f,
+                    rounds = 6,
+                    sound = true,
+                    vibrate = false,
+                    countdown = false,
+                    current = 5L,
+                    initial = 5L,
+                )
+            )
         }
     }
 }
@@ -20,13 +32,17 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun TimerAppPreview() {
-    val timerUiState = TimerUiState(
-        timeActive = 1000L,
-        timeRest = 1000L,
-        rounds = 6,
-        sound = false,
-        vibrate = true,
-        countdown = true
+    TimerApp(
+        TimerUiState(
+            timeActive = 5L,
+            timeRest = 10L,
+            progress = 1f,
+            rounds = 6,
+            sound = true,
+            vibrate = false,
+            countdown = false,
+            current = 5L,
+            initial = 5L,
+        )
     )
-    TimerApp()
 }

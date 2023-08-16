@@ -2,7 +2,6 @@ package com.example.hiit_timer_app.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,9 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.Yellow
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +29,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun TimerApp(modifier: Modifier = Modifier) {
+fun TimerApp(
+    uiState: TimerUiState,
+    modifier: Modifier = Modifier
+) {
 
     val viewModel: TimerViewModel = viewModel()
     val timerUiState by viewModel.uiState.collectAsState()
@@ -43,14 +43,20 @@ fun TimerApp(modifier: Modifier = Modifier) {
         composable("home") {
             TimerHomeScreen(
                 timerUiState = timerUiState,
-                onStartPressed = { navController.navigate("timer screen") },
+                onStartPressed = {
+                    navController.navigate("timer screen")
+                    viewModel.updateCurrent(uiState.timeActive)
+                    viewModel.updateInitial(uiState.timeActive)
+                    viewModel.updateProgress(1f)
+                    },
                 viewModel = viewModel
             )
         }
         composable("timer screen") {
             TimerScreen(
-                onBackPressed = { navController.navigate("home") }
-                /*timerUiState, viewModel*/
+                onBackPressed = { navController.navigate("home") },
+                uiState = timerUiState,
+                viewModel = viewModel
             )
         }
     }
@@ -67,12 +73,14 @@ fun TimerHomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(
-                    text = "HIIT App",
-                    color = Color.White
-                )},
+                title = {
+                    Text(
+                        text = "HIIT App",
+                        color = Color.White
+                    )
+                },
                 colors = topAppBarColors(
-                    containerColor = Gray
+                    containerColor = Black
                 )
             )
         },
@@ -82,7 +90,7 @@ fun TimerHomeScreen(
             .navigationBarsPadding()
     ) { contentPadding ->
         Surface(
-            color = DarkGray
+            color = Black
         ) {
             Column(
                 modifier = Modifier
@@ -131,5 +139,15 @@ fun TimeWorkout() {
 @Preview
 @Composable
 fun TimerAppPreview(modifier: Modifier = Modifier) {
-    TimerApp()
+    TimerApp(uiState = TimerUiState(
+        timeActive = 5L,
+        timeRest = 10L,
+        progress = 1f,
+        rounds = 6,
+        sound = true,
+        vibrate = false,
+        countdown = false,
+        current = 5L,
+        initial = 5L,
+    ))
 }

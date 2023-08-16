@@ -8,4 +8,8 @@ object TimerUtil {
         val seconds = timeInSeconds % 60
         return "%02d:%02d".format(minutes, seconds)
     }
+
+    fun calculateSpinProgress(totalTime: Long, initialValue: Long): Float {
+        return totalTime / initialValue.toFloat()
+    }
 }

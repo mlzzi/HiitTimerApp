@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.PauseCircle
 import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.StopCircle
@@ -24,6 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,9 +41,16 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerScreen(
+    uiState: TimerUiState,
+    viewModel: TimerViewModel,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
+    // keep track of the countdown state
+    var countdown by remember { mutableStateOf(uiState.countdown) }
+    //keep track of the timer running state
+    var isTimerRunning by remember { mutableStateOf(!countdown) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,7 +63,7 @@ fun TimerScreen(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.DarkGray
+                    containerColor = Color.Black
                 ),
                 navigationIcon = {
                     IconButton(onClick = { onBackPressed() }) {
@@ -73,8 +85,10 @@ fun TimerScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPadding), color = Color.DarkGray
+                .padding(innerPadding), color = Color.Black
         ) {
+
+
             BackHandler() {
                 onBackPressed()
             }
@@ -87,11 +101,23 @@ fun TimerScreen(
             ) {
                 StateText()
 
-                Animation()
+                Animation(
+                    timerUiState = uiState,
+                    viewModel = viewModel,
+                    countdown = countdown,
+                    isTimerRunning = isTimerRunning,
+                    changeCountdown = { countdown = it },
+                    changeTimerRunning = { isTimerRunning = it }
+                )
 
                 RoundCounter()
 
-                Buttons()
+                Buttons(
+                    uiState = uiState,
+                    viewModel = viewModel,
+                    isTimerRunning = isTimerRunning,
+                    changeTimerRunning = { isTimerRunning = it },
+                )
             }
         }
     }
@@ -116,7 +142,12 @@ fun RoundCounter() {
 }
 
 @Composable
-fun Buttons() {
+fun Buttons(
+    uiState: TimerUiState,
+    viewModel: TimerViewModel,
+    isTimerRunning: Boolean,
+    changeTimerRunning: (Boolean) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -128,11 +159,28 @@ fun Buttons() {
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
-        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(120.dp)) {
+        IconButton(
+            onClick = {
+                changeTimerRunning(!isTimerRunning)
+                viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
+//                progress = totalTime / initialValue.toFloat()
+//                viewModel.updateProgress(TimerUtil.calculateSpinProgress(totalTime, initialTime))
+//                changeProgress(TimerUtil.calculateSpinProgress(totalTime, initialTime))
+            },
+            modifier = Modifier.size(120.dp)
+        ) {
             Icon(
-                imageVector = Icons.Outlined.PlayCircle,
+                imageVector = if (isTimerRunning) {
+                    Icons.Outlined.PauseCircle
+                } else {
+                    Icons.Outlined.PlayCircle
+                },
                 contentDescription = "",
-                tint = Color.Magenta,
+                tint = if (isTimerRunning) {
+                    Color.Magenta
+                } else {
+                    Color.White
+                },
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
@@ -150,8 +198,23 @@ fun Buttons() {
 @Preview
 @Composable
 fun TimerScreenPreview() {
-//    val timerUiState = TimerUiState() // Initialize your TimerUiState object here
-//    val viewModel = TimerViewModel() // Initialize your TimerViewModel object here
+    val timerUiState = TimerUiState(
+        timeActive = 5L,
+        timeRest = 10L,
+        progress = 1f,
+        rounds = 6,
+        sound = true,
+        vibrate = false,
+        countdown = false,
+        current = 5L,
+        initial = 5L,
+    )
+    val viewModel = TimerViewModel()
 
-    TimerScreen(onBackPressed = {}, modifier = Modifier)
+    TimerScreen(
+        onBackPressed = {},
+        uiState = timerUiState,
+        viewModel = viewModel,
+        modifier = Modifier
+    )
 }
