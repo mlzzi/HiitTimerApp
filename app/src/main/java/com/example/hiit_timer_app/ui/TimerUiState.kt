@@ -1,8 +1,11 @@
 package com.example.hiit_timer_app.ui
 
+import com.example.hiit_timer_app.model.TimerType
+
 data class TimerUiState(
     var timeActive: Long,
     var timeRest: Long,
+    val currentTimerType: TimerType = TimerType.ACTIVE,
     var progress: Float,
     var rounds: Int,
     var sound: Boolean,

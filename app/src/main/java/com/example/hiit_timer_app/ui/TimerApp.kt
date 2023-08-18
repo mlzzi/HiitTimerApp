@@ -45,17 +45,16 @@ fun TimerApp(
                 timerUiState = timerUiState,
                 onStartPressed = {
                     navController.navigate("timer screen")
-                    viewModel.updateCurrent(uiState.timeActive)
-                    viewModel.updateInitial(uiState.timeActive)
-                    viewModel.updateProgress(1f)
-                    },
+                    viewModel.handleActiveTimerFinished(timerUiState.timeActive)
+//                    viewModel.updateRounds(timerUiState.rounds)
+                },
                 viewModel = viewModel
             )
         }
         composable("timer screen") {
             TimerScreen(
                 onBackPressed = { navController.navigate("home") },
-                uiState = timerUiState,
+                timerUiState = timerUiState,
                 viewModel = viewModel
             )
         }
@@ -122,7 +121,7 @@ fun TimerHomeScreen(
 
 @Composable
 fun TimeWorkout() {
-    Column() {
+    Column {
         Text(
             text = "WORKOUT LENGTH",
             color = Color.White,
@@ -139,15 +138,17 @@ fun TimeWorkout() {
 @Preview
 @Composable
 fun TimerAppPreview(modifier: Modifier = Modifier) {
-    TimerApp(uiState = TimerUiState(
-        timeActive = 5L,
-        timeRest = 10L,
-        progress = 1f,
-        rounds = 6,
-        sound = true,
-        vibrate = false,
-        countdown = false,
-        current = 5L,
-        initial = 5L,
-    ))
+    TimerApp(
+        uiState = TimerUiState(
+            timeActive = 5L,
+            timeRest = 10L,
+            progress = 1f,
+            rounds = 6,
+            sound = true,
+            vibrate = false,
+            countdown = false,
+            current = 5L,
+            initial = 5L,
+        )
+    )
 }

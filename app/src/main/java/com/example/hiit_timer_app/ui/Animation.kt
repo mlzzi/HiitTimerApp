@@ -1,6 +1,5 @@
 package com.example.hiit_timer_app.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,6 +22,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 import kotlinx.coroutines.delay
 
@@ -39,30 +39,12 @@ fun Animation(
         contentAlignment = Alignment.Center
     ) {
 
-        // Render the rest timer animation if the active timer is finished
-        if (timerUiState.initial == timerUiState.timeActive) {
-            // Render the active timer animation
-            SpinAnimation(
-                viewModel = viewModel,
-                uiState = timerUiState,
-                color = Color.Magenta,
-                modifier = Modifier.size(200.dp),
-                isTimerRunning = isTimerRunning
-            )
-            if (timerUiState.current == 0L) {
-                viewModel.handleActiveTimerFinished() // Handle transition in the view model
-            }
-        }
-        if (timerUiState.initial == timerUiState.timeRest) {
-            // Render the active timer animation
-            SpinAnimation(
-                viewModel = viewModel,
-                uiState = timerUiState,
-                color = Color.Cyan,
-                modifier = Modifier.size(200.dp),
-                isTimerRunning = isTimerRunning
-            )
-        }
+        SelectTimerType(
+            timerUiState = timerUiState,
+            viewModel = viewModel,
+            isTimerRunning = isTimerRunning
+        )
+
         // Render countdown if is on, or the timer text if countdown is off
         if (countdown) {
             AnimationCountDown(
@@ -78,6 +60,55 @@ fun Animation(
                 color = Color.White
             )
         }
+    }
+}
+
+@Composable
+fun SelectTimerType(
+    timerUiState: TimerUiState,
+    viewModel: TimerViewModel,
+    isTimerRunning: Boolean
+) {
+    if (timerUiState.rounds > 0) {
+        // Render the rest timer animation if the active timer is finished
+        if (timerUiState.currentTimerType == TimerType.ACTIVE) {
+            // Render the active timer animation
+            SpinAnimation(
+                viewModel = viewModel,
+                uiState = timerUiState,
+                color = Color.Magenta,
+                modifier = Modifier.size(200.dp),
+                isTimerRunning = isTimerRunning
+            )
+            if (timerUiState.current == 0L) {
+                viewModel.handleActiveTimerFinished(timerUiState.timeRest) // Handle transition in the view model
+                viewModel.updateCurrentTimerType(TimerType.REST)
+            }
+        }
+        if (timerUiState.currentTimerType == TimerType.REST){
+            // Render the active timer animation
+            SpinAnimation(
+                viewModel = viewModel,
+                uiState = timerUiState,
+                color = Color.Cyan,
+                modifier = Modifier.size(200.dp),
+                isTimerRunning = isTimerRunning
+            )
+            if (timerUiState.current == 0L) {
+                viewModel.handleActiveTimerFinished(timerUiState.timeActive) // Handle transition in the view model
+                viewModel.updateCurrentTimerType(TimerType.ACTIVE)
+                viewModel.updateRounds(- 1)
+            }
+        }
+    } else {
+        viewModel.updateCurrentTimerType(TimerType.FINISH)
+        CircularProgressIndicator(
+            progress = 1f,
+            modifier = Modifier.size(size = 300.dp),
+            color = Color.DarkGray,
+            strokeWidth = 10.dp,
+            strokeCap = StrokeCap.Round,
+        )
     }
 }
 

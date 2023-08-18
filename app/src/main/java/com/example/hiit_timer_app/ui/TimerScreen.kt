@@ -32,22 +32,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.hiit_timer_app.R
+import com.example.hiit_timer_app.model.TimerType
 
 // Composable that renders TimerScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerScreen(
-    uiState: TimerUiState,
+    timerUiState: TimerUiState,
     viewModel: TimerViewModel,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
     // keep track of the countdown state
-    var countdown by remember { mutableStateOf(uiState.countdown) }
+    var countdown by remember { mutableStateOf(timerUiState.countdown) }
     //keep track of the timer running state
     var isTimerRunning by remember { mutableStateOf(!countdown) }
 
@@ -88,8 +91,7 @@ fun TimerScreen(
                 .padding(innerPadding), color = Color.Black
         ) {
 
-
-            BackHandler() {
+            BackHandler {
                 onBackPressed()
             }
             Column(
@@ -99,10 +101,10 @@ fun TimerScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly,
             ) {
-                StateText()
+                StateText(timerUiState)
 
                 Animation(
-                    timerUiState = uiState,
+                    timerUiState = timerUiState,
                     viewModel = viewModel,
                     countdown = countdown,
                     isTimerRunning = isTimerRunning,
@@ -110,10 +112,10 @@ fun TimerScreen(
                     changeTimerRunning = { isTimerRunning = it }
                 )
 
-                RoundCounter()
+                RoundCounter(uiState = timerUiState)
 
                 Buttons(
-                    uiState = uiState,
+                    uiState = timerUiState,
                     viewModel = viewModel,
                     isTimerRunning = isTimerRunning,
                     changeTimerRunning = { isTimerRunning = it },
@@ -124,20 +126,34 @@ fun TimerScreen(
 }
 
 @Composable
-fun StateText() {
+fun StateText(timerUiState: TimerUiState) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "GO!", fontSize = 50.sp, color = Color.White)
+        Text(
+            text = if (timerUiState.currentTimerType == TimerType.ACTIVE) {
+                stringResource(R.string.go)
+            } else if (timerUiState.currentTimerType == TimerType.REST) {
+                stringResource(R.string.rest)
+            } else {
+                stringResource(R.string.finish)
+            },
+            fontSize = 50.sp,
+            color = Color.White
+        )
     }
 }
 
 @Composable
-fun RoundCounter() {
+fun RoundCounter(uiState: TimerUiState) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "Round 1/6", color = Color.White, fontSize = 30.sp)
+        Text(
+            text = "Round ${uiState.rounds}/6",
+            color = Color.White,
+            fontSize = 30.sp
+        )
     }
 }
 
@@ -213,7 +229,7 @@ fun TimerScreenPreview() {
 
     TimerScreen(
         onBackPressed = {},
-        uiState = timerUiState,
+        timerUiState = timerUiState,
         viewModel = viewModel,
         modifier = Modifier
     )
