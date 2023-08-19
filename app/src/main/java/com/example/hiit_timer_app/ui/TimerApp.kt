@@ -17,6 +17,7 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
@@ -27,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hiit_timer_app.util.TimerUtil
 
 @Composable
 fun TimerApp(
@@ -98,7 +100,7 @@ fun TimerHomeScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                TimeWorkout()
+                TimeWorkout(timerUiState)
                 TimerConfiguration(
                     timerUiState = timerUiState,
                     viewModel = viewModel
@@ -120,7 +122,7 @@ fun TimerHomeScreen(
 }
 
 @Composable
-fun TimeWorkout() {
+fun TimeWorkout(timerUiState: TimerUiState) {
     Column {
         Text(
             text = "WORKOUT LENGTH",
@@ -128,7 +130,7 @@ fun TimeWorkout() {
             fontSize = 30.sp
         )
         Text(
-            text = "12 Minutes",
+            text = TimerUtil.showWorkoutLength(timerUiState),
             color = Color.White,
             fontSize = 24.sp
         )
@@ -144,6 +146,7 @@ fun TimerAppPreview(modifier: Modifier = Modifier) {
             timeRest = 10L,
             progress = 1f,
             rounds = 6,
+            currentRound = 1,
             sound = true,
             vibrate = false,
             countdown = false,

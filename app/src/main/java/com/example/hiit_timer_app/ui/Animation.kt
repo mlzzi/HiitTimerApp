@@ -69,7 +69,7 @@ fun SelectTimerType(
     viewModel: TimerViewModel,
     isTimerRunning: Boolean
 ) {
-    if (timerUiState.rounds > 0) {
+    if (timerUiState.currentRound <= timerUiState.rounds) {
         // Render the rest timer animation if the active timer is finished
         if (timerUiState.currentTimerType == TimerType.ACTIVE) {
             // Render the active timer animation
@@ -85,7 +85,7 @@ fun SelectTimerType(
                 viewModel.updateCurrentTimerType(TimerType.REST)
             }
         }
-        if (timerUiState.currentTimerType == TimerType.REST){
+        if (timerUiState.currentTimerType == TimerType.REST) {
             // Render the active timer animation
             SpinAnimation(
                 viewModel = viewModel,
@@ -95,13 +95,14 @@ fun SelectTimerType(
                 isTimerRunning = isTimerRunning
             )
             if (timerUiState.current == 0L) {
+                viewModel.updateCurrentRound()
                 viewModel.handleActiveTimerFinished(timerUiState.timeActive) // Handle transition in the view model
                 viewModel.updateCurrentTimerType(TimerType.ACTIVE)
-                viewModel.updateRounds(- 1)
             }
         }
     } else {
         viewModel.updateCurrentTimerType(TimerType.FINISH)
+        viewModel.updateCurrent(0)
         CircularProgressIndicator(
             progress = 1f,
             modifier = Modifier.size(size = 300.dp),

@@ -54,11 +54,6 @@ fun TimerConfiguration(
             soundState = timerUiState.vibrate,
             onChangeSwitch = { switch -> viewModel.updateVibrateEnabled(switch) }
         )
-        SetSwitch(
-            text = "Countdown",
-            soundState = timerUiState.countdown,
-            onChangeSwitch = { switch -> viewModel.updateCountdownEnabled(switch) }
-        )
     }
 }
 

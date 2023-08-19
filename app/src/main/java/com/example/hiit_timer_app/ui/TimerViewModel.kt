@@ -1,13 +1,10 @@
 package com.example.hiit_timer_app.ui
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.hiit_timer_app.model.TimerType
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class TimerViewModel : ViewModel() {
 
@@ -19,6 +16,7 @@ class TimerViewModel : ViewModel() {
             initial = 2L,
             current = 2L,
             rounds = 1,
+            currentRound = 1,
             sound = true,
             vibrate = false,
             countdown = false
@@ -38,11 +36,14 @@ class TimerViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(timeActive = time)
     }
 
-    fun updateRounds(change: Int) {
-        val updatedRounds = _uiState.value.rounds + change
-        _uiState.value = _uiState.value.copy(rounds = updatedRounds)
+    fun updateRounds(rounds: Int) {
+        _uiState.value = _uiState.value.copy(rounds = rounds)
     }
 
+    fun updateCurrentRound() {
+        val updatedRounds = _uiState.value.currentRound + 1
+        _uiState.value = _uiState.value.copy(currentRound = updatedRounds)
+    }
 
     fun updateInitial(value: Long) {
         _uiState.value = _uiState.value.copy(initial = value)

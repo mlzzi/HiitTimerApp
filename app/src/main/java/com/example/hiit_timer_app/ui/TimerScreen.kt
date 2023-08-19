@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
+import com.example.hiit_timer_app.util.TimerUtil
 
 // Composable that renders TimerScreen
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,7 +151,7 @@ fun RoundCounter(uiState: TimerUiState) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Round ${uiState.rounds}/6",
+            text = TimerUtil.displayRoundsOnTimerScreen(uiState.rounds, uiState.currentRound),
             color = Color.White,
             fontSize = 30.sp
         )
@@ -179,9 +180,6 @@ fun Buttons(
             onClick = {
                 changeTimerRunning(!isTimerRunning)
                 viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
-//                progress = totalTime / initialValue.toFloat()
-//                viewModel.updateProgress(TimerUtil.calculateSpinProgress(totalTime, initialTime))
-//                changeProgress(TimerUtil.calculateSpinProgress(totalTime, initialTime))
             },
             modifier = Modifier.size(120.dp)
         ) {
@@ -219,6 +217,7 @@ fun TimerScreenPreview() {
         timeRest = 10L,
         progress = 1f,
         rounds = 6,
+        currentRound = 1,
         sound = true,
         vibrate = false,
         countdown = false,

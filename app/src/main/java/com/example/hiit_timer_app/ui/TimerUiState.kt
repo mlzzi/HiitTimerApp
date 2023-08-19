@@ -8,6 +8,7 @@ data class TimerUiState(
     val currentTimerType: TimerType = TimerType.ACTIVE,
     var progress: Float,
     var rounds: Int,
+    var currentRound: Int,
     var sound: Boolean,
     var vibrate: Boolean,
     var countdown: Boolean,
