@@ -50,10 +50,8 @@ fun TimerScreen(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
-    // keep track of the countdown state
-    var countdown by remember { mutableStateOf(timerUiState.countdown) }
     //keep track of the timer running state
-    var isTimerRunning by remember { mutableStateOf(!countdown) }
+    var isTimerRunning by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -107,9 +105,7 @@ fun TimerScreen(
                 Animation(
                     timerUiState = timerUiState,
                     viewModel = viewModel,
-                    countdown = countdown,
                     isTimerRunning = isTimerRunning,
-                    changeCountdown = { countdown = it },
                     changeTimerRunning = { isTimerRunning = it }
                 )
 
@@ -213,16 +209,17 @@ fun Buttons(
 @Composable
 fun TimerScreenPreview() {
     val timerUiState = TimerUiState(
-        timeActive = 5L,
-        timeRest = 10L,
+        currentTimerType = TimerType.ACTIVE,
+        timeActive = 5,
+        timeRest = 10,
         progress = 1f,
         rounds = 6,
         currentRound = 1,
         sound = true,
         vibrate = false,
         countdown = false,
-        current = 5L,
-        initial = 5L,
+        current = 5,
+        initial = 5,
     )
     val viewModel = TimerViewModel()
 

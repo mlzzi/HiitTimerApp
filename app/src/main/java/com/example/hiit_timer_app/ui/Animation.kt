@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,9 +31,7 @@ import kotlinx.coroutines.delay
 fun Animation(
     timerUiState: TimerUiState,
     viewModel: TimerViewModel,
-    countdown: Boolean,
     isTimerRunning: Boolean,
-    changeCountdown: (Boolean) -> Unit,
     changeTimerRunning: (Boolean) -> Unit
 ) {
     Box(
@@ -46,9 +45,13 @@ fun Animation(
         )
 
         // Render countdown if is on, or the timer text if countdown is off
-        if (countdown) {
+        if (
+            !isTimerRunning &&
+            timerUiState.current == timerUiState.initial &&
+            timerUiState.currentTimerType == TimerType.ACTIVE
+        ) {
+            countdownBeep()
             AnimationCountDown(
-                onCountDown = { changeCountdown(it) },
                 onTimerRunningChange = { changeTimerRunning(it) }
             )
         } else {
@@ -63,16 +66,15 @@ fun Animation(
     }
 }
 
+// Composable that deals with timer type change and the number of rounds
 @Composable
 fun SelectTimerType(
     timerUiState: TimerUiState,
     viewModel: TimerViewModel,
     isTimerRunning: Boolean
 ) {
-    if (timerUiState.currentRound <= timerUiState.rounds) {
-        // Render the rest timer animation if the active timer is finished
-        if (timerUiState.currentTimerType == TimerType.ACTIVE) {
-            // Render the active timer animation
+    when (timerUiState.currentTimerType) {
+        TimerType.ACTIVE -> {
             SpinAnimation(
                 viewModel = viewModel,
                 uiState = timerUiState,
@@ -80,13 +82,14 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 0L) {
-                viewModel.handleActiveTimerFinished(timerUiState.timeRest) // Handle transition in the view model
+            if (timerUiState.current == 3) countdownBeep()
+            if (timerUiState.current == 0) {
+                viewModel.handleTimerTypeFinish(timerUiState.timeRest)
                 viewModel.updateCurrentTimerType(TimerType.REST)
             }
         }
-        if (timerUiState.currentTimerType == TimerType.REST) {
-            // Render the active timer animation
+
+        TimerType.REST -> {
             SpinAnimation(
                 viewModel = viewModel,
                 uiState = timerUiState,
@@ -94,22 +97,28 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 0L) {
-                viewModel.updateCurrentRound()
-                viewModel.handleActiveTimerFinished(timerUiState.timeActive) // Handle transition in the view model
-                viewModel.updateCurrentTimerType(TimerType.ACTIVE)
+            if (timerUiState.current == 3) countdownBeep()
+            if (timerUiState.current == 0) {
+                if (timerUiState.currentRound <= timerUiState.rounds) {
+                    viewModel.updateCurrentRound()
+                    viewModel.handleTimerTypeFinish(timerUiState.timeActive)
+                    viewModel.updateCurrentTimerType(TimerType.ACTIVE)
+                } else {
+                    viewModel.updateCurrentTimerType(TimerType.FINISH)
+                    viewModel.updateCurrent(0)
+                }
             }
         }
-    } else {
-        viewModel.updateCurrentTimerType(TimerType.FINISH)
-        viewModel.updateCurrent(0)
-        CircularProgressIndicator(
-            progress = 1f,
-            modifier = Modifier.size(size = 300.dp),
-            color = Color.DarkGray,
-            strokeWidth = 10.dp,
-            strokeCap = StrokeCap.Round,
-        )
+
+        else -> {
+            CircularProgressIndicator(
+                progress = 1f,
+                modifier = Modifier.size(size = 300.dp),
+                color = Color.DarkGray,
+                strokeWidth = 10.dp,
+                strokeCap = StrokeCap.Round,
+            )
+        }
     }
 }
 
@@ -161,7 +170,6 @@ fun SpinAnimation(
 // Animation for when the Countdown is On
 @Composable
 fun AnimationCountDown(
-    onCountDown: (Boolean) -> Unit,
     onTimerRunningChange: (Boolean) -> Unit
 ) {
     Column {
@@ -175,7 +183,6 @@ fun AnimationCountDown(
             } else if (count == 0) {
                 // Starts the timer animation after countdown
                 onTimerRunningChange(true)
-                onCountDown(false)
             }
         }
         AnimatedContent(targetState = count, label = "CountDown") { targetCount ->
@@ -187,6 +194,18 @@ fun AnimationCountDown(
                     color = Color.White
                 )
             }
+        }
+    }
+}
+
+// Animation for when the Countdown is On
+@Composable
+fun countdownBeep() {
+    Column {
+        val mContext = LocalContext.current
+
+        LaunchedEffect(Unit) {
+            TimerUtil.playCountdownSound(mContext)
         }
     }
 }

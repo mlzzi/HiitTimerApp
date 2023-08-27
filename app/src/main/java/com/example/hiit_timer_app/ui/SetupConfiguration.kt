@@ -33,15 +33,19 @@ fun TimerConfiguration(
         SetTime(
             text = "Active",
             time = timerUiState.timeActive,
-            viewModel = viewModel,
             changeTime = { time -> viewModel.updateTimeActive(time) },
             modifier = modifier
         )
         SetTime(
             text = "Rest",
             time = timerUiState.timeRest,
-            viewModel = viewModel,
             changeTime = { time -> viewModel.updateTimeRest(time) },
+            modifier = modifier
+        )
+        SetRounds(
+            text = "Rounds",
+            changeRound = { round -> viewModel.updateRounds(round.toInt())},
+            rounds = timerUiState.rounds,
             modifier = modifier
         )
         SetSwitch(
@@ -58,11 +62,47 @@ fun TimerConfiguration(
 }
 
 @Composable
+fun SetRounds(
+    text: String,
+    rounds: Int,
+    changeRound: (Int) -> Unit,
+    modifier: Modifier,
+) {
+    var showDialogPicker by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.align(Alignment.CenterVertically),
+            fontSize = 24.sp,
+            color = Color.White
+        )
+        TextButton(onClick = { showDialogPicker = true }) {
+            Text(
+                text = rounds.toString(),
+                modifier = Modifier.align(Alignment.CenterVertically),
+                fontSize = 24.sp
+            )
+        }
+        if (showDialogPicker) {
+            RoundDialog(
+                onDismissRequest = { showDialogPicker = false },
+                roundsInput = rounds,
+                onRoundUpdate = { updatedTime -> changeRound(updatedTime) }
+            )
+        }
+    }
+    Spacer(modifier = modifier.height(12.dp))
+}
+
+@Composable
 fun SetTime(
     text: String,
-    time: Long,
-    viewModel: TimerViewModel,
-    changeTime: (Long) -> Unit,
+    time: Int,
+    changeTime: (Int) -> Unit,
     modifier: Modifier,
 ) {
     var showDialogPicker by remember { mutableStateOf(false) }

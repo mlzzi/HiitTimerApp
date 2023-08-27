@@ -1,6 +1,8 @@
 package com.example.hiit_timer_app.ui
 
+import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
+import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,19 +12,33 @@ class TimerViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         TimerUiState(
-            timeActive = 2L,
-            timeRest = 3L,
+            currentTimerType = TimerType.ACTIVE,
+            timeActive = 5,
+            timeRest = 6,
             progress = 1f,
-            initial = 2L,
-            current = 2L,
+            initial = 5,
+            current = 5,
             rounds = 1,
-            currentRound = 1,
+            currentRound = 2,
             sound = true,
             vibrate = false,
             countdown = false
         )
     )
     val uiState: StateFlow<TimerUiState> = _uiState
+
+    fun setTimerToStart() {
+        val active = _uiState.value.timeActive
+        _uiState.update {
+            it.copy(
+                initial = active,
+                current = active,
+                progress = 1f,
+                currentRound = 2,
+                currentTimerType = TimerType.ACTIVE
+            )
+        }
+    }
 
     fun updateCurrentTimerType(timerType: TimerType) {
         _uiState.update {
@@ -32,7 +48,7 @@ class TimerViewModel : ViewModel() {
         }
     }
 
-    fun updateTimeActive(time: Long) {
+    fun updateTimeActive(time: Int) {
         _uiState.value = _uiState.value.copy(timeActive = time)
     }
 
@@ -45,15 +61,11 @@ class TimerViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(currentRound = updatedRounds)
     }
 
-    fun updateInitial(value: Long) {
-        _uiState.value = _uiState.value.copy(initial = value)
-    }
-
-    fun updateCurrent(value: Long) {
+    fun updateCurrent(value: Int) {
         _uiState.value = _uiState.value.copy(current = value)
     }
 
-    fun updateTimeRest(time: Long) {
+    fun updateTimeRest(time: Int) {
         _uiState.value = _uiState.value.copy(timeRest = time)
     }
 
@@ -65,21 +77,16 @@ class TimerViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(vibrate = enabled)
     }
 
-    fun updateCountdownEnabled(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(countdown = enabled)
-    }
-
     fun updateProgress(progress: Float) {
         _uiState.value = _uiState.value.copy(progress = progress)
     }
 
     // Handle transition logic when active timer finishes
-    fun handleActiveTimerFinished(timeSet: Long) {
+    fun handleTimerTypeFinish(timeSet: Int) {
         _uiState.value = _uiState.value.copy(
-            initial = timeSet,
             current = timeSet,
+            initial = timeSet,
             progress = 1f
         )
-
     }
 }

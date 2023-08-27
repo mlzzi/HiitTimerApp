@@ -1,5 +1,6 @@
 package com.example.hiit_timer_app.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +18,6 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 
 @Composable
@@ -46,9 +47,9 @@ fun TimerApp(
             TimerHomeScreen(
                 timerUiState = timerUiState,
                 onStartPressed = {
+                    viewModel.setTimerToStart()
                     navController.navigate("timer screen")
-                    viewModel.handleActiveTimerFinished(timerUiState.timeActive)
-//                    viewModel.updateRounds(timerUiState.rounds)
+                    Log.d("rounds", "${timerUiState.rounds}")
                 },
                 viewModel = viewModel
             )
@@ -142,16 +143,17 @@ fun TimeWorkout(timerUiState: TimerUiState) {
 fun TimerAppPreview(modifier: Modifier = Modifier) {
     TimerApp(
         uiState = TimerUiState(
-            timeActive = 5L,
-            timeRest = 10L,
+            currentTimerType = TimerType.ACTIVE,
+            timeActive = 5,
+            timeRest = 10,
             progress = 1f,
             rounds = 6,
             currentRound = 1,
             sound = true,
             vibrate = false,
             countdown = false,
-            current = 5L,
-            initial = 5L,
+            current = 5,
+            initial = 5,
         )
     )
 }
