@@ -1,6 +1,7 @@
 package com.example.hiit_timer_app.ui
 
 import android.media.MediaPlayer
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
@@ -82,6 +83,7 @@ class TimerViewModel : ViewModel() {
     }
 
     // Handle transition logic when active timer finishes
+    @VisibleForTesting
     fun handleTimerTypeFinish(timeSet: Int) {
         _uiState.value = _uiState.value.copy(
             current = timeSet,

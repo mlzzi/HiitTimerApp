@@ -34,7 +34,7 @@ fun TimerConfiguration(
             text = "Active",
             time = timerUiState.timeActive,
             changeTime = { time -> viewModel.updateTimeActive(time) },
-            modifier = modifier
+            modifier = modifier.semantics { contentDescription = "Active Button" }
         )
         SetTime(
             text = "Rest",

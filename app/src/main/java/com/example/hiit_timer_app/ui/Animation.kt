@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
+import com.example.hiit_timer_app.util.TimerUtil.calculateSpinProgress
 import kotlinx.coroutines.delay
 
 @Composable
@@ -51,6 +52,7 @@ fun Animation(
             timerUiState.currentTimerType == TimerType.ACTIVE
         ) {
             CountdownBeep(timerUiState)
+            Vibration(timerUiState)
             AnimationCountDown(
                 onTimerRunningChange = { changeTimerRunning(it) }
             )
@@ -82,7 +84,10 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 3) CountdownBeep(timerUiState)
+            if (timerUiState.current == 3) {
+                CountdownBeep(timerUiState)
+                Vibration(timerUiState)
+            }
             if (timerUiState.current == 0) {
                 viewModel.handleTimerTypeFinish(timerUiState.timeRest)
                 viewModel.updateCurrentTimerType(TimerType.REST)
@@ -97,7 +102,10 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 3) CountdownBeep(timerUiState)
+            if (timerUiState.current == 3) {
+                CountdownBeep(timerUiState)
+                Vibration(timerUiState)
+            }
             if (timerUiState.current == 0) {
                 if (timerUiState.currentRound <= timerUiState.rounds) {
                     viewModel.updateCurrentRound()
@@ -160,7 +168,7 @@ fun SpinAnimation(
             for (remainingTime in initialTime downTo 0) {
                 // Update the timer and the progress bar
                 viewModel.updateCurrent(remainingTime)
-                uiState.progress = 1 - (remainingTime.toFloat() / initialTime.toFloat())
+                uiState.progress = calculateSpinProgress(remainingTime, initialTime)
                 delay(1000)
             }
         }
@@ -206,7 +214,20 @@ fun CountdownBeep(timerUiState: TimerUiState) {
 
         if (timerUiState.sound) {
             LaunchedEffect(Unit) {
-                TimerUtil.playCountdownSound(mContext)
+                TimerUtil.playCountdownSound(mContext, timerUiState)
+            }
+        }
+    }
+}
+
+@Composable
+fun Vibration(timerUiState: TimerUiState) {
+    Column {
+        val mContext = LocalContext.current
+
+        if (timerUiState.vibrate) {
+            LaunchedEffect(Unit) {
+                TimerUtil.vibrate(mContext, timerUiState)
             }
         }
     }

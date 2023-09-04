@@ -176,6 +176,7 @@ fun Buttons(
             onClick = {
                 changeTimerRunning(!isTimerRunning)
                 viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
+                if (!isTimerRunning) uiState.sound = false // consertar
             },
             modifier = Modifier.size(120.dp)
         ) {
