@@ -1,5 +1,7 @@
 package com.example.hiit_timer_app.ui
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,13 +31,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hiit_timer_app.RunningService
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 
 @Composable
 fun TimerApp(
     uiState: TimerUiState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    context: Context
 ) {
 
     val viewModel: TimerViewModel = viewModel()
@@ -47,9 +52,13 @@ fun TimerApp(
             TimerHomeScreen(
                 timerUiState = timerUiState,
                 onStartPressed = {
+                    Intent(context.applicationContext, RunningService::class.java).also {
+                        it.action = RunningService.Actions.START.toString()
+                        context.startService(it)
+                    }
                     viewModel.setTimerToStart()
                     navController.navigate("timer screen")
-                    Log.d("rounds", "${timerUiState.rounds}")
+                    Log.d("Start hiit", "Button Clicked!")
                 },
                 viewModel = viewModel
             )
@@ -154,6 +163,7 @@ fun TimerAppPreview(modifier: Modifier = Modifier) {
             countdown = false,
             current = 5,
             initial = 5,
-        )
+        ),
+        context = LocalContext.current
     )
 }

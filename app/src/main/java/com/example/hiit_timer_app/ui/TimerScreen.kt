@@ -1,5 +1,7 @@
 package com.example.hiit_timer_app.ui
 
+import android.content.Context
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,12 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
+import com.example.hiit_timer_app.RunningService
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 
@@ -128,12 +132,16 @@ fun StateText(timerUiState: TimerUiState) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = if (timerUiState.currentTimerType == TimerType.ACTIVE) {
-                stringResource(R.string.go)
-            } else if (timerUiState.currentTimerType == TimerType.REST) {
-                stringResource(R.string.rest)
-            } else {
-                stringResource(R.string.finish)
+            text = when (timerUiState.currentTimerType) {
+                TimerType.ACTIVE -> {
+                    stringResource(R.string.go)
+                }
+                TimerType.REST -> {
+                    stringResource(R.string.rest)
+                }
+                else -> {
+                    stringResource(R.string.finish)
+                }
             },
             fontSize = 50.sp,
             color = Color.White

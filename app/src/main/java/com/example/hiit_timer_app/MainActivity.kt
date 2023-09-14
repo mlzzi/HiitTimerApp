@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.ui.TimerApp
@@ -26,7 +27,8 @@ class MainActivity : ComponentActivity() {
                     countdown = false,
                     current = 5,
                     initial = 5,
-                )
+                ),
+                context = this@MainActivity
             )
         }
     }
@@ -48,6 +50,7 @@ fun TimerAppPreview() {
             countdown = false,
             current = 5,
             initial = 5,
-        )
+        ),
+        context = LocalContext.current
     )
 }
