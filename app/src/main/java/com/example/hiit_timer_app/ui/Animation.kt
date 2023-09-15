@@ -51,7 +51,8 @@ fun Animation(
             timerUiState.current == timerUiState.initial &&
             timerUiState.currentTimerType == TimerType.ACTIVE
         ) {
-            CountdownBeep(timerUiState)
+            viewModel.soundManager.startCountdownSound()
+//            CountdownBeep(timerUiState, viewModel)
             Vibration(timerUiState)
             AnimationCountDown(
                 onTimerRunningChange = { changeTimerRunning(it) }
@@ -84,8 +85,9 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 3) {
-                CountdownBeep(timerUiState)
+            if (timerUiState.current in 1..3) {
+                viewModel.soundManager.startCountdownSound()
+//                CountdownBeep(timerUiState, viewModel)
                 Vibration(timerUiState)
             }
             if (timerUiState.current == 0) {
@@ -103,7 +105,8 @@ fun SelectTimerType(
                 isTimerRunning = isTimerRunning
             )
             if (timerUiState.current == 3) {
-                CountdownBeep(timerUiState)
+                viewModel.soundManager.startCountdownSound()
+//                CountdownBeep(timerUiState, viewModel)
                 Vibration(timerUiState)
             }
             if (timerUiState.current == 0) {
@@ -208,14 +211,10 @@ fun AnimationCountDown(
 
 // Countdown Beep for the animation countdown and for when timer is about to finish
 @Composable
-fun CountdownBeep(timerUiState: TimerUiState) {
-    Column {
-        val mContext = LocalContext.current
-
-        if (timerUiState.sound) {
-            LaunchedEffect(Unit) {
-                TimerUtil.playCountdownSound(mContext, timerUiState)
-            }
+fun CountdownBeep(timerUiState: TimerUiState, timerViewModel: TimerViewModel) {
+    if (timerUiState.sound) {
+        LaunchedEffect(Unit) {
+            timerViewModel.soundManager.startCountdownSound()
         }
     }
 }

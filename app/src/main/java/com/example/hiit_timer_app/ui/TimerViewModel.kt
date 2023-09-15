@@ -1,23 +1,15 @@
 package com.example.hiit_timer_app.ui
 
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.media.MediaPlayer
-import android.os.Build
+import android.app.Application
 import androidx.annotation.VisibleForTesting
-import androidx.compose.ui.graphics.Color
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.ViewModel
-import com.example.hiit_timer_app.R
+import androidx.lifecycle.AndroidViewModel
+import com.example.hiit_timer_app.SoundManager
 import com.example.hiit_timer_app.model.TimerType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-class TimerViewModel : ViewModel() {
+class TimerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(
         TimerUiState(
@@ -35,6 +27,12 @@ class TimerViewModel : ViewModel() {
         )
     )
     val uiState: StateFlow<TimerUiState> = _uiState
+
+    // Create an instance of SoundManager
+    val soundManager: SoundManager = SoundManager(
+        application,
+        uiState = uiState
+    ) // Replace appContext with your application's context
 
     fun setTimerToStart() {
         val active = _uiState.value.timeActive
@@ -99,5 +97,4 @@ class TimerViewModel : ViewModel() {
             progress = 1f
         )
     }
-
 }

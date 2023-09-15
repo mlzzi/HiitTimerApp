@@ -20,10 +20,11 @@ class RunningService : Service() {
     }
 
     private fun start() {
+
         val notification = NotificationCompat.Builder(this, "running_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Run is active")
-            .setContentText("Elapse time: 00:50")
+            .setContentTitle("Training Active")
+            .setContentText("Keep moving")
             .build()
         startForeground(1, notification)
     }

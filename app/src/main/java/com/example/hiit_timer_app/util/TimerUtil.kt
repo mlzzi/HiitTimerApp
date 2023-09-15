@@ -32,10 +32,11 @@ object TimerUtil {
         val mMediaPlayer = MediaPlayer.create(context, R.raw.countdown_beep)
         mMediaPlayer.start()
         if (!timerUiState.sound) {
-            mMediaPlayer.stop()
+            mMediaPlayer.pause()
         }
     }
 
+    @Suppress("DEPRECATION")
     fun vibrate(context: Context, timerUiState: TimerUiState) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 

@@ -1,8 +1,10 @@
 package com.example.hiit_timer_app.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,6 +49,8 @@ fun TimerApp(
 
     val navController = rememberNavController()
 
+    val activity = (LocalContext.current as? Activity)
+
     NavHost(navController, startDestination = "home") {
         composable("home") {
             TimerHomeScreen(
@@ -58,9 +62,9 @@ fun TimerApp(
                     }
                     viewModel.setTimerToStart()
                     navController.navigate("timer screen")
-                    Log.d("Start hiit", "Button Clicked!")
                 },
-                viewModel = viewModel
+                viewModel = viewModel,
+                onBackPressed = { activity?.finishAffinity() }
             )
         }
         composable("timer screen") {
@@ -79,8 +83,12 @@ fun TimerHomeScreen(
     timerUiState: TimerUiState,
     onStartPressed: () -> Unit,
     viewModel: TimerViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackPressed: () -> Unit
 ) {
+    BackHandler {
+        onBackPressed()
+    }
     Scaffold(
         topBar = {
             TopAppBar(

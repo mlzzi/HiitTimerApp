@@ -1,7 +1,9 @@
 package com.example.hiit_timer_app.ui
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -184,7 +186,20 @@ fun Buttons(
             onClick = {
                 changeTimerRunning(!isTimerRunning)
                 viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
-                if (!isTimerRunning) uiState.sound = false // consertar
+//                if (!isTimerRunning) uiState.sound = false // consertar
+
+                if (uiState.sound) {
+                    viewModel.soundManager.pauseCountdownSound()
+                } else {
+                    uiState.sound = true
+                    viewModel.soundManager.startCountdownSound()
+                }
+                if (viewModel.soundManager.mediaPlayer?.isPlaying() == true) {
+                    Log.d("is playing", "yes")
+                } else {
+                    Log.d("is playing", "no")
+                }
+                Log.d("sound disabling", "sound has being disabled")
             },
             modifier = Modifier.size(120.dp)
         ) {
@@ -230,7 +245,7 @@ fun TimerScreenPreview() {
         current = 5,
         initial = 5,
     )
-    val viewModel = TimerViewModel()
+    val viewModel = TimerViewModel(application = Application())
 
     TimerScreen(
         onBackPressed = {},
