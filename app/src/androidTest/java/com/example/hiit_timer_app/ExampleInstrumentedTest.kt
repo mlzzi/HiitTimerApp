@@ -1,18 +1,8 @@
 package com.example.hiit_timer_app
 
-import android.app.Activity
-import android.widget.TextView
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.hiit_timer_app.model.TimerType
@@ -48,17 +38,18 @@ class TimerUITests {
         rule.setContent {
             TimerApp(
                 TimerUiState(
-                    currentTimerType = TimerType.ACTIVE,
                     timeActive = 5,
                     timeRest = 6,
+                    currentTimerType = TimerType.ACTIVE,
                     progress = 1f,
-                    initial = 5,
-                    current = 5,
                     rounds = 1,
                     currentRound = 2,
                     sound = true,
                     vibrate = false,
-                    countdown = false
+                    countdown = false,
+                    current = 5,
+                    initial = 5,
+                    isSoundPaused = false
                 )
             )
         }

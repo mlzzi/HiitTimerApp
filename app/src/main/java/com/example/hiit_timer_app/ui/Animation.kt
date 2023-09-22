@@ -1,5 +1,6 @@
 package com.example.hiit_timer_app.ui
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -33,7 +34,8 @@ fun Animation(
     timerUiState: TimerUiState,
     viewModel: TimerViewModel,
     isTimerRunning: Boolean,
-    changeTimerRunning: (Boolean) -> Unit
+    changeTimerRunning: (Boolean) -> Unit,
+    context: Context
 ) {
     Box(
         contentAlignment = Alignment.Center
@@ -42,7 +44,8 @@ fun Animation(
         SelectTimerType(
             timerUiState = timerUiState,
             viewModel = viewModel,
-            isTimerRunning = isTimerRunning
+            isTimerRunning = isTimerRunning,
+            context = context
         )
 
         // Render countdown if is on, or the timer text if countdown is off
@@ -51,8 +54,7 @@ fun Animation(
             timerUiState.current == timerUiState.initial &&
             timerUiState.currentTimerType == TimerType.ACTIVE
         ) {
-            viewModel.soundManager.startCountdownSound()
-//            CountdownBeep(timerUiState, viewModel)
+            CountdownBeep(timerUiState, viewModel, isTimerRunning)
             Vibration(timerUiState)
             AnimationCountDown(
                 onTimerRunningChange = { changeTimerRunning(it) }
@@ -74,7 +76,8 @@ fun Animation(
 fun SelectTimerType(
     timerUiState: TimerUiState,
     viewModel: TimerViewModel,
-    isTimerRunning: Boolean
+    isTimerRunning: Boolean,
+    context: Context
 ) {
     when (timerUiState.currentTimerType) {
         TimerType.ACTIVE -> {
@@ -85,9 +88,8 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current in 1..3) {
-                viewModel.soundManager.startCountdownSound()
-//                CountdownBeep(timerUiState, viewModel)
+            if (timerUiState.current == 3) {
+                CountdownBeep(timerUiState, viewModel, isTimerRunning)
                 Vibration(timerUiState)
             }
             if (timerUiState.current == 0) {
@@ -104,9 +106,8 @@ fun SelectTimerType(
                 modifier = Modifier.size(200.dp),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 3) {
-                viewModel.soundManager.startCountdownSound()
-//                CountdownBeep(timerUiState, viewModel)
+            if (timerUiState.current <= 3) {
+                CountdownBeep(timerUiState, viewModel, isTimerRunning)
                 Vibration(timerUiState)
             }
             if (timerUiState.current == 0) {
@@ -211,11 +212,29 @@ fun AnimationCountDown(
 
 // Countdown Beep for the animation countdown and for when timer is about to finish
 @Composable
-fun CountdownBeep(timerUiState: TimerUiState, timerViewModel: TimerViewModel) {
+fun CountdownBeep(
+    timerUiState: TimerUiState,
+    timerViewModel: TimerViewModel,
+    isTimerRunning: Boolean
+) {
+//    val player by lazy {
+//        AndroidAudioPlayer(context)
+//    }
+    if (timerUiState.sound && !isTimerRunning) {
+        timerViewModel.player.play()
+    }
     if (timerUiState.sound) {
-        LaunchedEffect(Unit) {
-            timerViewModel.soundManager.startCountdownSound()
+//        LaunchedEffect(Unit) {
+        if (timerUiState.current == 3 && isTimerRunning) {
+            timerViewModel.player.play()
+        } else if (timerUiState.current < 3) {
+            if (isTimerRunning) {
+                timerViewModel.player.pause()
+            } else {
+                timerViewModel.player.play()
+            }
         }
+//        }
     }
 }
 

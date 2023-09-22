@@ -1,9 +1,6 @@
 package com.example.hiit_timer_app.ui
 
-import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
-import com.example.hiit_timer_app.RunningService
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 
@@ -54,10 +50,15 @@ fun TimerScreen(
     timerUiState: TimerUiState,
     viewModel: TimerViewModel,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    context: Context
 ) {
+
     //keep track of the timer running state
     var isTimerRunning by remember { mutableStateOf(false) }
+
+    // Prevent screen from turn off
+    KeepScreenOn()
 
     Scaffold(
         topBar = {
@@ -112,7 +113,8 @@ fun TimerScreen(
                     timerUiState = timerUiState,
                     viewModel = viewModel,
                     isTimerRunning = isTimerRunning,
-                    changeTimerRunning = { isTimerRunning = it }
+                    changeTimerRunning = { isTimerRunning = it },
+                    context = context
                 )
 
                 RoundCounter(uiState = timerUiState)
@@ -138,9 +140,11 @@ fun StateText(timerUiState: TimerUiState) {
                 TimerType.ACTIVE -> {
                     stringResource(R.string.go)
                 }
+
                 TimerType.REST -> {
                     stringResource(R.string.rest)
                 }
+
                 else -> {
                     stringResource(R.string.finish)
                 }
@@ -186,20 +190,11 @@ fun Buttons(
             onClick = {
                 changeTimerRunning(!isTimerRunning)
                 viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
-//                if (!isTimerRunning) uiState.sound = false // consertar
-
-                if (uiState.sound) {
-                    viewModel.soundManager.pauseCountdownSound()
+                if (viewModel.player.isPlaying()) {
+                    viewModel.player.pause()
                 } else {
-                    uiState.sound = true
-                    viewModel.soundManager.startCountdownSound()
+                    viewModel.player.play()
                 }
-                if (viewModel.soundManager.mediaPlayer?.isPlaying() == true) {
-                    Log.d("is playing", "yes")
-                } else {
-                    Log.d("is playing", "no")
-                }
-                Log.d("sound disabling", "sound has being disabled")
             },
             modifier = Modifier.size(120.dp)
         ) {
@@ -229,28 +224,40 @@ fun Buttons(
     }
 }
 
-@Preview
 @Composable
-fun TimerScreenPreview() {
-    val timerUiState = TimerUiState(
-        currentTimerType = TimerType.ACTIVE,
-        timeActive = 5,
-        timeRest = 10,
-        progress = 1f,
-        rounds = 6,
-        currentRound = 1,
-        sound = true,
-        vibrate = false,
-        countdown = false,
-        current = 5,
-        initial = 5,
-    )
-    val viewModel = TimerViewModel(application = Application())
-
-    TimerScreen(
-        onBackPressed = {},
-        timerUiState = timerUiState,
-        viewModel = viewModel,
-        modifier = Modifier
-    )
+fun KeepScreenOn() {
+    val currentView = LocalView.current
+    DisposableEffect(Unit) {
+        currentView.keepScreenOn = true
+        onDispose {
+            currentView.keepScreenOn = false
+        }
+    }
 }
+
+//@Preview
+//@Composable
+//fun TimerScreenPreview(context: Context) {
+//    val timerUiState = TimerUiState(
+//        timeActive = 5,
+//        timeRest = 10,
+//        currentTimerType = TimerType.ACTIVE,
+//        progress = 1f,
+//        rounds = 6,
+//        currentRound = 1,
+//        sound = true,
+//        vibrate = false,
+//        countdown = false,
+//        current = 5,
+//        initial = 5,
+//    )
+//    val viewModel = TimerViewModel()
+//
+//    TimerScreen(
+//        onBackPressed = {},
+//        timerUiState = timerUiState,
+//        viewModel = viewModel,
+//        modifier = Modifier,
+//        context = context
+//    )
+//}

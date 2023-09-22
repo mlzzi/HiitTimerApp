@@ -25,7 +25,8 @@ object TimerUtil {
     }
 
     fun showWorkoutLength(uiState: TimerUiState): String {
-        return ((uiState.timeActive + uiState.timeRest) * uiState.rounds).toString() + " Minutes"
+//        return ((uiState.timeActive + uiState.timeRest) * uiState.rounds).toString() + " Minutes"
+        return formatTime((uiState.timeActive + uiState.timeRest) * uiState.rounds) + " Minutes"
     }
 
     fun playCountdownSound(context: Context, timerUiState: TimerUiState) {

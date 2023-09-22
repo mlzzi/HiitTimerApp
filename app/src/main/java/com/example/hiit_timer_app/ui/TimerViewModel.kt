@@ -3,7 +3,8 @@ package com.example.hiit_timer_app.ui
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.AndroidViewModel
-import com.example.hiit_timer_app.SoundManager
+import androidx.lifecycle.ViewModel
+import com.example.hiit_timer_app.audioplayer.AndroidAudioPlayer
 import com.example.hiit_timer_app.model.TimerType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,11 +29,9 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
     )
     val uiState: StateFlow<TimerUiState> = _uiState
 
-    // Create an instance of SoundManager
-    val soundManager: SoundManager = SoundManager(
-        application,
-        uiState = uiState
-    ) // Replace appContext with your application's context
+    val player by lazy {
+        AndroidAudioPlayer(application)
+    }
 
     fun setTimerToStart() {
         val active = _uiState.value.timeActive

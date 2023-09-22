@@ -3,7 +3,6 @@ package com.example.hiit_timer_app.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -71,8 +71,15 @@ fun TimerApp(
             TimerScreen(
                 onBackPressed = { navController.navigate("home") },
                 timerUiState = timerUiState,
-                viewModel = viewModel
+                viewModel = viewModel,
+                context = context
             )
+        }
+    }
+    if (timerUiState.currentTimerType == TimerType.FINISH) {
+        Intent(context.applicationContext, RunningService::class.java).also {
+            it.action = RunningService.Actions.STOP.toString()
+            context.startService(it)
         }
     }
 }
@@ -160,9 +167,9 @@ fun TimeWorkout(timerUiState: TimerUiState) {
 fun TimerAppPreview(modifier: Modifier = Modifier) {
     TimerApp(
         uiState = TimerUiState(
-            currentTimerType = TimerType.ACTIVE,
             timeActive = 5,
             timeRest = 10,
+            currentTimerType = TimerType.ACTIVE,
             progress = 1f,
             rounds = 6,
             currentRound = 1,
@@ -170,7 +177,7 @@ fun TimerAppPreview(modifier: Modifier = Modifier) {
             vibrate = false,
             countdown = false,
             current = 5,
-            initial = 5,
+            initial = 5
         ),
         context = LocalContext.current
     )
