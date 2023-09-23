@@ -54,9 +54,10 @@ fun Animation(
             timerUiState.current == timerUiState.initial &&
             timerUiState.currentTimerType == TimerType.ACTIVE
         ) {
-            CountdownBeep(timerUiState, viewModel, isTimerRunning)
+            CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
             Vibration(timerUiState)
             AnimationCountDown(
+                timerViewModel = viewModel,
                 onTimerRunningChange = { changeTimerRunning(it) }
             )
         } else {
@@ -89,7 +90,7 @@ fun SelectTimerType(
                 isTimerRunning = isTimerRunning
             )
             if (timerUiState.current == 3) {
-                CountdownBeep(timerUiState, viewModel, isTimerRunning)
+                CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
                 Vibration(timerUiState)
             }
             if (timerUiState.current == 0) {
@@ -107,7 +108,7 @@ fun SelectTimerType(
                 isTimerRunning = isTimerRunning
             )
             if (timerUiState.current <= 3) {
-                CountdownBeep(timerUiState, viewModel, isTimerRunning)
+                CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
                 Vibration(timerUiState)
             }
             if (timerUiState.current == 0) {
@@ -182,8 +183,10 @@ fun SpinAnimation(
 // Animation for when the Countdown is On
 @Composable
 fun AnimationCountDown(
+    timerViewModel: TimerViewModel,
     onTimerRunningChange: (Boolean) -> Unit
 ) {
+    timerViewModel.player.play()
     Column {
         // Count down that goes from 3 to 1
         var count by remember { mutableIntStateOf(3) }
@@ -212,29 +215,13 @@ fun AnimationCountDown(
 
 // Countdown Beep for the animation countdown and for when timer is about to finish
 @Composable
-fun CountdownBeep(
+fun CountdownBeepPlayer(
     timerUiState: TimerUiState,
     timerViewModel: TimerViewModel,
     isTimerRunning: Boolean
 ) {
-//    val player by lazy {
-//        AndroidAudioPlayer(context)
-//    }
-    if (timerUiState.sound && !isTimerRunning) {
+    if (timerUiState.sound && isTimerRunning) {
         timerViewModel.player.play()
-    }
-    if (timerUiState.sound) {
-//        LaunchedEffect(Unit) {
-        if (timerUiState.current == 3 && isTimerRunning) {
-            timerViewModel.player.play()
-        } else if (timerUiState.current < 3) {
-            if (isTimerRunning) {
-                timerViewModel.player.pause()
-            } else {
-                timerViewModel.player.play()
-            }
-        }
-//        }
     }
 }
 
