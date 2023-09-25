@@ -1,5 +1,6 @@
 package com.example.hiit_timer_app.ui
 
+import android.app.Application
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +17,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.PauseCircle
 import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.Replay
-import androidx.compose.material.icons.outlined.StopCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,10 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
@@ -66,20 +69,20 @@ fun TimerScreen(
                 title = {
                     Text(
                         "Back to Setup",
+                        style = MaterialTheme.typography.displayLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = Color.White
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black
+//                    containerColor = Color.Black
                 ),
                 navigationIcon = {
                     IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+//                            tint = Color.White
                         )
                     }
                 }
@@ -94,7 +97,8 @@ fun TimerScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPadding), color = Color.Black
+                .padding(innerPadding),
+//            color = Color.Black
         ) {
 
             BackHandler {
@@ -103,7 +107,7 @@ fun TimerScreen(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = dimensionResource(id = R.dimen.padding_large)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly,
             ) {
@@ -130,6 +134,7 @@ fun TimerScreen(
     }
 }
 
+// Handles with the text that shows if is active, rest timer or if its finished
 @Composable
 fun StateText(timerUiState: TimerUiState) {
     Row(
@@ -150,7 +155,8 @@ fun StateText(timerUiState: TimerUiState) {
                 }
             },
             fontSize = 50.sp,
-            color = Color.White
+            style = MaterialTheme.typography.displayLarge,
+//            color = Color.White
         )
     }
 }
@@ -162,12 +168,14 @@ fun RoundCounter(uiState: TimerUiState) {
     ) {
         Text(
             text = TimerUtil.displayRoundsOnTimerScreen(uiState.rounds, uiState.currentRound),
-            color = Color.White,
+//            color = Color.White,
+            style = MaterialTheme.typography.displayMedium,
             fontSize = 30.sp
         )
     }
 }
 
+// Composable that handle with the buttons
 @Composable
 fun Buttons(
     uiState: TimerUiState,
@@ -178,14 +186,6 @@ fun Buttons(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(80.dp)) {
-            Icon(
-                imageVector = Icons.Outlined.Replay,
-                contentDescription = "",
-                tint = Color.White,
-                modifier = Modifier.fillMaxSize(1f)
-            )
-        }
         IconButton(
             onClick = {
                 changeTimerRunning(!isTimerRunning)
@@ -196,7 +196,7 @@ fun Buttons(
                     viewModel.player.play()
                 }
             },
-            modifier = Modifier.size(120.dp)
+            modifier = Modifier.size(dimensionResource(id = R.dimen.timer_screen_width_size_elements))
         ) {
             Icon(
                 imageVector = if (isTimerRunning) {
@@ -213,17 +213,21 @@ fun Buttons(
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
-        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(80.dp)) {
+        IconButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier.size(dimensionResource(id = R.dimen.timer_screen_width_size_elements))
+        ) {
             Icon(
-                imageVector = Icons.Outlined.StopCircle,
+                imageVector = Icons.Outlined.Replay,
                 contentDescription = "",
-                tint = Color.White,
+//                tint = Color.White,
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
     }
 }
 
+// Prevent screen from turn off
 @Composable
 fun KeepScreenOn() {
     val currentView = LocalView.current
@@ -235,29 +239,30 @@ fun KeepScreenOn() {
     }
 }
 
-//@Preview
-//@Composable
-//fun TimerScreenPreview(context: Context) {
-//    val timerUiState = TimerUiState(
-//        timeActive = 5,
-//        timeRest = 10,
-//        currentTimerType = TimerType.ACTIVE,
-//        progress = 1f,
-//        rounds = 6,
-//        currentRound = 1,
-//        sound = true,
-//        vibrate = false,
-//        countdown = false,
-//        current = 5,
-//        initial = 5,
-//    )
-//    val viewModel = TimerViewModel()
-//
-//    TimerScreen(
-//        onBackPressed = {},
-//        timerUiState = timerUiState,
-//        viewModel = viewModel,
-//        modifier = Modifier,
-//        context = context
-//    )
-//}
+@Preview
+@Composable
+fun TimerScreenPreview() {
+    val timerUiState = TimerUiState(
+        timeActive = 5,
+        timeRest = 10,
+        currentTimerType = TimerType.ACTIVE,
+        progress = 1f,
+        rounds = 6,
+        currentRound = 1,
+        sound = true,
+        vibrate = false,
+        countdown = false,
+        current = 5,
+        initial = 5,
+    )
+
+    val viewModel = TimerViewModel(Application())
+
+    TimerScreen(
+        onBackPressed = {},
+        timerUiState = timerUiState,
+        viewModel = viewModel,
+        modifier = Modifier,
+        context = LocalContext.current
+    )
+}

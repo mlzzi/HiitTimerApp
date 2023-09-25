@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import com.example.hiit_timer_app.ui.theme.HiitTimerAppTheme
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.ui.TimerApp
 import com.example.hiit_timer_app.ui.TimerUiState
@@ -24,22 +25,24 @@ class MainActivity : ComponentActivity() {
             0
         )
         setContent {
-            TimerApp(
-                TimerUiState(
-                    timeActive = 5,
-                    timeRest = 10,
-                    currentTimerType = TimerType.ACTIVE,
-                    progress = 1f,
-                    rounds = 6,
-                    currentRound = 1,
-                    sound = true,
-                    vibrate = false,
-                    countdown = false,
-                    current = 5,
-                    initial = 5
-                ),
-                context = this@MainActivity
-            )
+            HiitTimerAppTheme {
+                TimerApp(
+                    TimerUiState(
+                        timeActive = 5,
+                        timeRest = 10,
+                        currentTimerType = TimerType.ACTIVE,
+                        progress = 1f,
+                        rounds = 6,
+                        currentRound = 1,
+                        sound = true,
+                        vibrate = false,
+                        countdown = false,
+                        current = 5,
+                        initial = 5
+                    ),
+                    context = this@MainActivity
+                )
+            }
         }
     }
 }

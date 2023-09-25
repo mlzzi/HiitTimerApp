@@ -3,7 +3,6 @@ package com.example.hiit_timer_app.ui
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import com.example.hiit_timer_app.audioplayer.AndroidAudioPlayer
 import com.example.hiit_timer_app.model.TimerType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +21,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
             current = 5,
             rounds = 1,
             currentRound = 2,
-            sound = true,
+            sound = false,
             vibrate = false,
             countdown = false
         )

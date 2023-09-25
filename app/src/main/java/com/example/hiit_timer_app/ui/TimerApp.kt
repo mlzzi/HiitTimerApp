@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,17 +23,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.RunningService
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
@@ -102,12 +102,10 @@ fun TimerHomeScreen(
                 title = {
                     Text(
                         text = "HIIT App",
-                        color = Color.White
+                        style = MaterialTheme.typography.displayLarge
                     )
                 },
-                colors = topAppBarColors(
-                    containerColor = Black
-                )
+                colors = topAppBarColors()
             )
         },
         modifier = Modifier
@@ -116,30 +114,38 @@ fun TimerHomeScreen(
             .navigationBarsPadding()
     ) { contentPadding ->
         Surface(
-            color = Black
         ) {
             Column(
                 modifier = Modifier
                     .padding(contentPadding)
-                    .padding(8.dp)
+                    .padding(dimensionResource(id = R.dimen.padding_medium))
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 TimeWorkout(timerUiState)
-                TimerConfiguration(
-                    timerUiState = timerUiState,
-                    viewModel = viewModel
-                )
-                Button(
-                    onClick = onStartPressed,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp)
+                Column(
+                    modifier = modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(
-                        text = "Start HIIT",
-                        fontSize = 24.sp
+                    TimerConfiguration(
+                        timerUiState = timerUiState,
+                        viewModel = viewModel
                     )
+                    Button(
+                        onClick = onStartPressed,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                bottom = dimensionResource(id = R.dimen.padding_small),
+                                start = 8.dp,
+                                end = 8.dp
+                            )
+                    ) {
+                        Text(
+                            text = "Start HIIT",
+                            style = MaterialTheme.typography.displayMedium,
+                            fontSize = 24.sp
+                        )
+                    }
                 }
             }
         }
@@ -147,17 +153,18 @@ fun TimerHomeScreen(
 }
 
 @Composable
-fun TimeWorkout(timerUiState: TimerUiState) {
-    Column {
+fun TimeWorkout(timerUiState: TimerUiState, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+    ) {
         Text(
             text = "WORKOUT LENGTH",
-            color = Color.White,
-            fontSize = 30.sp
+            style = MaterialTheme.typography.displayMedium
         )
         Text(
             text = TimerUtil.showWorkoutLength(timerUiState),
-            color = Color.White,
-            fontSize = 24.sp
+            style = MaterialTheme.typography.labelSmall
         )
     }
 }

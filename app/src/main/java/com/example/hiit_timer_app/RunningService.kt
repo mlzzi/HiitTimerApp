@@ -25,6 +25,7 @@ class RunningService : Service() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Training Active")
             .setContentText("Keep moving")
+            .setSilent(true)
             .build()
         startForeground(1, notification)
     }

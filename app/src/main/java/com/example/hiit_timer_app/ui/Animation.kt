@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,9 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 import com.example.hiit_timer_app.util.TimerUtil.calculateSpinProgress
@@ -54,7 +56,9 @@ fun Animation(
             timerUiState.current == timerUiState.initial &&
             timerUiState.currentTimerType == TimerType.ACTIVE
         ) {
-            CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
+            if (timerUiState.sound) {
+                CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
+            }
             Vibration(timerUiState)
             AnimationCountDown(
                 timerViewModel = viewModel,
@@ -64,6 +68,7 @@ fun Animation(
             // Render the formatted time based on the active or rest timer
             Text(
                 text = TimerUtil.formatTime(timerUiState.current),
+                style = MaterialTheme.typography.displayMedium,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -86,7 +91,7 @@ fun SelectTimerType(
                 viewModel = viewModel,
                 uiState = timerUiState,
                 color = Color.Magenta,
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(dimensionResource(id = R.dimen.animation_size)),
                 isTimerRunning = isTimerRunning
             )
             if (timerUiState.current == 3) {
@@ -104,7 +109,7 @@ fun SelectTimerType(
                 viewModel = viewModel,
                 uiState = timerUiState,
                 color = Color.Cyan,
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(dimensionResource(id = R.dimen.animation_size)),
                 isTimerRunning = isTimerRunning
             )
             if (timerUiState.current <= 3) {
@@ -126,9 +131,9 @@ fun SelectTimerType(
         else -> {
             CircularProgressIndicator(
                 progress = 1f,
-                modifier = Modifier.size(size = 300.dp),
+                modifier = Modifier.size(size = dimensionResource(id = R.dimen.spin_animation_size)),
                 color = Color.DarkGray,
-                strokeWidth = 10.dp,
+                strokeWidth = dimensionResource(id = R.dimen.stroke_width),
                 strokeCap = StrokeCap.Round,
             )
         }
@@ -147,24 +152,24 @@ fun SpinAnimation(
     val progressAnimate by animateFloatAsState(
         targetValue = uiState.progress,
         animationSpec = tween(
-            durationMillis = uiState.current.toInt() * 1000, //animation duration
+            durationMillis = uiState.current * 1000, //animation duration
             easing = LinearEasing
         ), label = "SpinAnimation"
     )
     // Circular animation of the timer
     CircularProgressIndicator(
         progress = 1f,
-        modifier = Modifier.size(size = 300.dp),
+        modifier = Modifier.size(size = dimensionResource(id = R.dimen.spin_animation_size)),
         color = Color.DarkGray,
-        strokeWidth = 10.dp,
+        strokeWidth = dimensionResource(id = R.dimen.stroke_width),
         strokeCap = StrokeCap.Round,
     )
     // Grey background of the indicator
     CircularProgressIndicator(
         progress = progressAnimate,
-        modifier = Modifier.size(size = 300.dp),
+        modifier = Modifier.size(size = dimensionResource(id = R.dimen.spin_animation_size)),
         color = color,
-        strokeWidth = 10.dp,
+        strokeWidth = dimensionResource(id = R.dimen.stroke_width),
         strokeCap = StrokeCap.Round,
     )
     LaunchedEffect(isTimerRunning) {
@@ -180,7 +185,7 @@ fun SpinAnimation(
     }
 }
 
-// Animation for when the Countdown is On
+// Animation countdown before timer starts
 @Composable
 fun AnimationCountDown(
     timerViewModel: TimerViewModel,
@@ -205,15 +210,15 @@ fun AnimationCountDown(
                 // Displays the countdown value
                 Text(
                     text = "$targetCount",
-                    fontSize = 96.sp,
-                    color = Color.White
+                    style = MaterialTheme.typography.headlineLarge,
+//                    color = Color.White
                 )
             }
         }
     }
 }
 
-// Countdown Beep for the animation countdown and for when timer is about to finish
+// Countdown Beep for when timer is about to finish
 @Composable
 fun CountdownBeepPlayer(
     timerUiState: TimerUiState,
@@ -225,6 +230,7 @@ fun CountdownBeepPlayer(
     }
 }
 
+// Handle vibration feedback
 @Composable
 fun Vibration(timerUiState: TimerUiState) {
     Column {
