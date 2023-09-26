@@ -29,14 +29,6 @@ object TimerUtil {
         return formatTime((uiState.timeActive + uiState.timeRest) * uiState.rounds) + " Minutes"
     }
 
-    fun playCountdownSound(context: Context, timerUiState: TimerUiState) {
-        val mMediaPlayer = MediaPlayer.create(context, R.raw.countdown_beep)
-        mMediaPlayer.start()
-        if (!timerUiState.sound) {
-            mMediaPlayer.pause()
-        }
-    }
-
     @Suppress("DEPRECATION")
     fun vibrate(context: Context, timerUiState: TimerUiState) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

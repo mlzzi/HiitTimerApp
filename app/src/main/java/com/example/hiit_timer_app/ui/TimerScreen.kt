@@ -190,9 +190,9 @@ fun Buttons(
             onClick = {
                 changeTimerRunning(!isTimerRunning)
                 viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
-                if (viewModel.player.isPlaying()) {
+                if (viewModel.player.isPlaying() && uiState.sound) {
                     viewModel.player.pause()
-                } else {
+                } else if (!viewModel.player.isPlaying() && uiState.sound) {
                     viewModel.player.play()
                 }
             },

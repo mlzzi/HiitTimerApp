@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -102,10 +105,11 @@ fun TimerHomeScreen(
                 title = {
                     Text(
                         text = "HIIT App",
-                        style = MaterialTheme.typography.displayLarge
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
-                colors = topAppBarColors()
+                colors = topAppBarColors(MaterialTheme.colorScheme.background)
             )
         },
         modifier = Modifier
@@ -114,6 +118,7 @@ fun TimerHomeScreen(
             .navigationBarsPadding()
     ) { contentPadding ->
         Surface(
+            color = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier
@@ -130,7 +135,7 @@ fun TimerHomeScreen(
                         timerUiState = timerUiState,
                         viewModel = viewModel
                     )
-                    Button(
+                    ElevatedButton(
                         onClick = onStartPressed,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -138,12 +143,20 @@ fun TimerHomeScreen(
                                 bottom = dimensionResource(id = R.dimen.padding_small),
                                 start = 8.dp,
                                 end = 8.dp
-                            )
+                            ),
+                        shape = MaterialTheme.shapes.medium,
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 6.dp
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        )
                     ) {
                         Text(
                             text = "Start HIIT",
                             style = MaterialTheme.typography.displayMedium,
-                            fontSize = 24.sp
+                            fontSize = 24.sp,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
@@ -156,7 +169,7 @@ fun TimerHomeScreen(
 fun TimeWorkout(timerUiState: TimerUiState, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+            .padding(start = 12.dp, end = 8.dp, bottom = 12.dp)
     ) {
         Text(
             text = "WORKOUT LENGTH",

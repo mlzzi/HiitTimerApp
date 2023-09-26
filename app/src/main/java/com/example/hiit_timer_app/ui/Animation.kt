@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -16,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
@@ -39,6 +42,10 @@ fun Animation(
     changeTimerRunning: (Boolean) -> Unit,
     context: Context
 ) {
+    // Use a rememberUpdatedState composable function to store the formatted time in memory and to update the UI whenever the formatted time changes.
+    val formattedTime by rememberUpdatedState(TimerUtil.formatTime(timerUiState.current))
+
+    // Wrap the entire body of the composable function in a composable function.
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -49,30 +56,30 @@ fun Animation(
             isTimerRunning = isTimerRunning,
             context = context
         )
-
+        Text(
+            text = formattedTime,
+            style = MaterialTheme.typography.displayMedium,
+            fontSize = 44.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
         // Render countdown if is on, or the timer text if countdown is off
         if (
-            !isTimerRunning &&
             timerUiState.current == timerUiState.initial &&
             timerUiState.currentTimerType == TimerType.ACTIVE
         ) {
-            if (timerUiState.sound) {
-                CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
+            if (!isTimerRunning) {
+                if (timerUiState.sound) {
+                    CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
+                }
+                if (timerUiState.vibrate) {
+                    Vibration(timerUiState)
+                }
+                AnimationCountDown(
+                    timerViewModel = viewModel,
+                    onTimerRunningChange = { changeTimerRunning(it) }
+                )
             }
-            Vibration(timerUiState)
-            AnimationCountDown(
-                timerViewModel = viewModel,
-                onTimerRunningChange = { changeTimerRunning(it) }
-            )
-        } else {
-            // Render the formatted time based on the active or rest timer
-            Text(
-                text = TimerUtil.formatTime(timerUiState.current),
-                style = MaterialTheme.typography.displayMedium,
-                fontSize = 44.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
         }
     }
 }
@@ -191,8 +198,10 @@ fun AnimationCountDown(
     timerViewModel: TimerViewModel,
     onTimerRunningChange: (Boolean) -> Unit
 ) {
-    timerViewModel.player.play()
-    Column {
+    val color = MaterialTheme.colorScheme.background
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
         // Count down that goes from 3 to 1
         var count by remember { mutableIntStateOf(3) }
 
@@ -205,13 +214,16 @@ fun AnimationCountDown(
                 onTimerRunningChange(true)
             }
         }
+        Canvas(modifier = Modifier.size(200.dp), onDraw = {
+            drawCircle(color = color)
+        })
         AnimatedContent(targetState = count, label = "CountDown") { targetCount ->
             if (count > 0) {
                 // Displays the countdown value
                 Text(
                     text = "$targetCount",
                     style = MaterialTheme.typography.headlineLarge,
-//                    color = Color.White
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
