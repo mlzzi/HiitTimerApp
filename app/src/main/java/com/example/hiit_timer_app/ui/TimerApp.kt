@@ -4,16 +4,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -101,64 +101,69 @@ fun TimerHomeScreen(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "HIIT App",
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                },
-                colors = topAppBarColors(MaterialTheme.colorScheme.background)
-            )
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                shadowElevation = 12.dp,
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            ) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "HIIT App",
+                            style = MaterialTheme.typography.displayLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
+                )
+            }
         },
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
     ) { contentPadding ->
-        Surface(
-            color = MaterialTheme.colorScheme.background
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize()
+                .padding(contentPadding)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(contentPadding)
                     .padding(dimensionResource(id = R.dimen.padding_medium))
                     .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 TimeWorkout(timerUiState)
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    TimerConfiguration(
-                        timerUiState = timerUiState,
-                        viewModel = viewModel
-                    )
-                    ElevatedButton(
-                        onClick = onStartPressed,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                bottom = dimensionResource(id = R.dimen.padding_small),
-                                start = 8.dp,
-                                end = 8.dp
-                            ),
-                        shape = MaterialTheme.shapes.medium,
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = 6.dp
+                TimerConfiguration(
+                    timerUiState = timerUiState,
+                    viewModel = viewModel
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                ElevatedButton(
+                    onClick = onStartPressed,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            bottom = dimensionResource(id = R.dimen.padding_small),
+                            start = 8.dp,
+                            end = 8.dp
                         ),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        )
-                    ) {
-                        Text(
-                            text = "Start HIIT",
-                            style = MaterialTheme.typography.displayMedium,
-                            fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 6.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    )
+                ) {
+                    Text(
+                        text = "Start HIIT",
+                        style = MaterialTheme.typography.displayMedium,
+                        fontSize = 24.sp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
         }

@@ -61,7 +61,7 @@ fun Animation(
             style = MaterialTheme.typography.displayMedium,
             fontSize = 44.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = MaterialTheme.colorScheme.onBackground
         )
         // Render countdown if is on, or the timer text if countdown is off
         if (
