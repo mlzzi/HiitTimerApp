@@ -23,7 +23,7 @@ val Typography = Typography(
     displayMedium = TextStyle(
         fontFamily = Monda,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontSize = 24.sp
     ),
     labelSmall = TextStyle(
         fontFamily = Monda,
@@ -34,5 +34,10 @@ val Typography = Typography(
         fontFamily = Monda,
         fontWeight = FontWeight.Bold,
         fontSize = 96.sp
-    )
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = Monda,
+        fontWeight = FontWeight.Bold,
+        fontSize = 42.sp
+    ),
 )

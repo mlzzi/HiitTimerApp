@@ -3,4 +3,6 @@
     <string name="go">GO!</string>
     <string name="rest">REST</string>
     <string name="finish">FINISH</string>
+    <string name="prepare">PREPARE</string>
+    <string name="elapsed_time">Elapsed Time</string>
 </resources>

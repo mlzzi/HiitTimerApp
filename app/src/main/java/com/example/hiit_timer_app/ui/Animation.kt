@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +22,14 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
@@ -49,24 +51,48 @@ fun Animation(
     Box(
         contentAlignment = Alignment.Center
     ) {
-
+        // select and run the animation spin
         SelectTimerType(
             timerUiState = timerUiState,
             viewModel = viewModel,
             isTimerRunning = isTimerRunning,
             context = context
         )
-        Text(
-            text = formattedTime,
-            style = MaterialTheme.typography.displayMedium,
-            fontSize = 44.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+
+        // Text of the elapsed time
+        Box(contentAlignment = Alignment.Center) {
+
+            MiddleCircle()
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = when (timerUiState.currentTimerType) {
+                        TimerType.ACTIVE -> painterResource(id = R.drawable.sprint)
+                        else -> painterResource(id = R.drawable.resting)
+                    },
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = "Icon",
+                    modifier = Modifier.size(32.dp)
+                )
+                Text(
+                    text = formattedTime,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = stringResource(R.string.elapsed_time),
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+        }
+
         // Render countdown if is on, or the timer text if countdown is off
         if (
             timerUiState.current == timerUiState.initial &&
-            timerUiState.currentTimerType == TimerType.ACTIVE
+            timerUiState.currentTimerType == TimerType.PREPARE
         ) {
             if (!isTimerRunning) {
                 if (timerUiState.sound) {
@@ -97,7 +123,7 @@ fun SelectTimerType(
             SpinAnimation(
                 viewModel = viewModel,
                 uiState = timerUiState,
-                color = Color.Magenta,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(dimensionResource(id = R.dimen.animation_size)),
                 isTimerRunning = isTimerRunning
             )
@@ -115,7 +141,7 @@ fun SelectTimerType(
             SpinAnimation(
                 viewModel = viewModel,
                 uiState = timerUiState,
-                color = Color.Cyan,
+                color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(dimensionResource(id = R.dimen.animation_size)),
                 isTimerRunning = isTimerRunning
             )
@@ -139,7 +165,9 @@ fun SelectTimerType(
             CircularProgressIndicator(
                 progress = 1f,
                 modifier = Modifier.size(size = dimensionResource(id = R.dimen.spin_animation_size)),
-                color = Color.DarkGray,
+                color = if (timerUiState.currentTimerType == TimerType.PREPARE) {
+                    MaterialTheme.colorScheme.secondary
+                } else MaterialTheme.colorScheme.onSecondary,
                 strokeWidth = dimensionResource(id = R.dimen.stroke_width),
                 strokeCap = StrokeCap.Round,
             )
@@ -167,7 +195,7 @@ fun SpinAnimation(
     CircularProgressIndicator(
         progress = 1f,
         modifier = Modifier.size(size = dimensionResource(id = R.dimen.spin_animation_size)),
-        color = Color.DarkGray,
+        color = MaterialTheme.colorScheme.onSecondary,
         strokeWidth = dimensionResource(id = R.dimen.stroke_width),
         strokeCap = StrokeCap.Round,
     )
@@ -198,7 +226,6 @@ fun AnimationCountDown(
     timerViewModel: TimerViewModel,
     onTimerRunningChange: (Boolean) -> Unit
 ) {
-    val color = MaterialTheme.colorScheme.background
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -214,9 +241,9 @@ fun AnimationCountDown(
                 onTimerRunningChange(true)
             }
         }
-        Canvas(modifier = Modifier.size(200.dp), onDraw = {
-            drawCircle(color = color)
-        })
+
+        MiddleCircle()
+
         AnimatedContent(targetState = count, label = "CountDown") { targetCount ->
             if (count > 0) {
                 // Displays the countdown value
@@ -226,8 +253,29 @@ fun AnimationCountDown(
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
+            if (count == 0) timerViewModel.updateCurrentTimerType(TimerType.ACTIVE)
         }
     }
+}
+
+@Composable
+fun MiddleCircle() {
+    val color = MaterialTheme.colorScheme.background
+    Canvas(modifier = Modifier.size(260.dp), onDraw = {
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.Gray,
+                    Color.White
+                )
+            )
+        )
+    })
+    Canvas(modifier = Modifier.size(220.dp), onDraw = {
+        drawCircle(
+            color = color
+        )
+    })
 }
 
 // Countdown Beep for when timer is about to finish

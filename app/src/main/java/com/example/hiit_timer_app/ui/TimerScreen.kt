@@ -3,15 +3,19 @@ package com.example.hiit_timer_app.ui
 import android.app.Application
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.PauseCircle
@@ -41,6 +45,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
@@ -72,17 +77,15 @@ fun TimerScreen(
                         style = MaterialTheme.typography.displayLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = Color.Black
-                ),
                 navigationIcon = {
                     IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-//                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -97,8 +100,8 @@ fun TimerScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-//            color = Color.Black
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.background)
         ) {
 
             BackHandler {
@@ -129,6 +132,8 @@ fun TimerScreen(
                     isTimerRunning = isTimerRunning,
                     changeTimerRunning = { isTimerRunning = it },
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -142,6 +147,10 @@ fun StateText(timerUiState: TimerUiState) {
     ) {
         Text(
             text = when (timerUiState.currentTimerType) {
+                TimerType.PREPARE -> {
+                    stringResource(R.string.prepare)
+                }
+
                 TimerType.ACTIVE -> {
                     stringResource(R.string.go)
                 }
@@ -154,9 +163,8 @@ fun StateText(timerUiState: TimerUiState) {
                     stringResource(R.string.finish)
                 }
             },
-            fontSize = 50.sp,
             style = MaterialTheme.typography.displayLarge,
-//            color = Color.White
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -168,9 +176,8 @@ fun RoundCounter(uiState: TimerUiState) {
     ) {
         Text(
             text = TimerUtil.displayRoundsOnTimerScreen(uiState.rounds, uiState.currentRound),
-//            color = Color.White,
+            color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.displayMedium,
-            fontSize = 30.sp
         )
     }
 }
@@ -184,7 +191,8 @@ fun Buttons(
     changeTimerRunning: (Boolean) -> Unit
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.width(dimensionResource(id = R.dimen.timer_screen_width_buttons))
     ) {
         IconButton(
             onClick = {
@@ -204,23 +212,22 @@ fun Buttons(
                 } else {
                     Icons.Outlined.PlayCircle
                 },
-                contentDescription = "",
-                tint = if (isTimerRunning) {
-                    Color.Magenta
-                } else {
-                    Color.White
-                },
+                contentDescription = "Play Button",
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
         IconButton(
             onClick = { /*TODO*/ },
             modifier = Modifier.size(dimensionResource(id = R.dimen.timer_screen_width_size_elements))
         ) {
             Icon(
                 imageVector = Icons.Outlined.Replay,
-                contentDescription = "",
-//                tint = Color.White,
+                contentDescription = "Restart Button",
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.fillMaxSize(1f)
             )
         }

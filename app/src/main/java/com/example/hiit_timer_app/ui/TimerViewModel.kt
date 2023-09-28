@@ -13,7 +13,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(
         TimerUiState(
-            currentTimerType = TimerType.ACTIVE,
+            currentTimerType = TimerType.PREPARE,
             timeActive = 5,
             timeRest = 6,
             progress = 1f,
@@ -40,7 +40,7 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
                 current = active,
                 progress = 1f,
                 currentRound = 2,
-                currentTimerType = TimerType.ACTIVE
+                currentTimerType = TimerType.PREPARE
             )
         }
     }
