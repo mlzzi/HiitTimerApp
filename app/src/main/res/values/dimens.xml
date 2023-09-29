@@ -5,7 +5,7 @@
     <dimen name="padding_large">16dp</dimen>
     <dimen name="spacer">12dp</dimen>
     <dimen name="timer_screen_width_size_elements">100dp</dimen>
-    <dimen name="timer_screen_width_buttons">270dp</dimen>
+    <dimen name="timer_screen_width_buttons">265dp</dimen>
     <dimen name="animation_size">200dp</dimen>
     <dimen name="spin_animation_size">292dp</dimen>
     <dimen name="stroke_width">15dp</dimen>

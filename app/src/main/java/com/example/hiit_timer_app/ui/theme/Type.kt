@@ -6,38 +6,54 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.unit.dp
 import com.example.hiit_timer_app.R
 
-val Monda = FontFamily(
-    Font(R.font.monda_regular),
-    Font(R.font.monda_bold, FontWeight.Bold)
+val Ubuntu = FontFamily(
+    Font(R.font.ubuntu_bold_italic),
+)
+
+val Brandon = FontFamily(
+    Font(R.font.brandon_regular),
+    Font(R.font.brandon_medium, FontWeight.Medium),
+    Font(R.font.brandon_bold, FontWeight.Bold)
 )
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = Monda,
+        fontFamily = Brandon,
         fontWeight = FontWeight.Bold,
         fontSize = 36.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = Monda,
-        fontWeight = FontWeight.Normal,
+        fontFamily = Brandon,
+        fontWeight = FontWeight.Medium,
         fontSize = 24.sp
     ),
+    displaySmall = TextStyle(
+        fontFamily = Brandon,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp
+    ),
     labelSmall = TextStyle(
-        fontFamily = Monda,
+        fontFamily = Brandon,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
     headlineLarge = TextStyle(
-        fontFamily = Monda,
+        fontFamily = Brandon,
         fontWeight = FontWeight.Bold,
         fontSize = 96.sp
     ),
     headlineMedium = TextStyle(
-        fontFamily = Monda,
+        fontFamily = Brandon,
         fontWeight = FontWeight.Bold,
         fontSize = 42.sp
     ),
+    titleLarge = TextStyle(
+        fontFamily = Ubuntu,
+        fontWeight = FontWeight.Bold,
+        fontSize = 46.sp
+    )
 )

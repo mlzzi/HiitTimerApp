@@ -4,5 +4,7 @@
     <string name="rest">REST</string>
     <string name="finish">FINISH</string>
     <string name="prepare">PREPARE</string>
-    <string name="elapsed_time">Elapsed Time</string>
+    <string name="remaining_time">Remaining Time</string>
+    <string name="back_to_setup">Back to Setup</string>
+    <string name="hiit_timer">HIIT TIMER</string>
 </resources>

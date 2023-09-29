@@ -53,7 +53,7 @@ fun TimerConfiguration(
         ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     ) {
         Column(
@@ -130,7 +130,7 @@ fun SetTime(
             text = text,
             style = MaterialTheme.typography.displayMedium,
             modifier = Modifier.align(Alignment.CenterVertically),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer
         )
         Spacer(modifier = modifier.weight(1f))
         TextButton(onClick = { showDialogPicker = true }) {
@@ -138,7 +138,7 @@ fun SetTime(
                 text = TimerUtil.formatTime(time),
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.align(Alignment.CenterVertically),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.tertiaryContainer
             )
         }
         if (showDialogPicker) {
@@ -180,7 +180,7 @@ fun SetRounds(
             text = text,
             style = MaterialTheme.typography.displayMedium,
             modifier = Modifier.align(Alignment.CenterVertically),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer
         )
         Spacer(modifier = modifier.weight(1f))
         TextButton(onClick = { showDialogPicker = true }) {
@@ -188,7 +188,7 @@ fun SetRounds(
                 text = rounds.toString(),
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.align(Alignment.CenterVertically),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.tertiaryContainer
             )
         }
         if (showDialogPicker) {
@@ -226,7 +226,7 @@ fun SetSwitch(
             text = text,
             style = MaterialTheme.typography.displayMedium,
             modifier = Modifier.align(Alignment.CenterVertically),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.primaryContainer
         )
         Spacer(modifier = modifier.weight(1f))
         Switch(
@@ -235,9 +235,9 @@ fun SetSwitch(
                 .semantics { contentDescription = "Demo" }
                 .scale(0.8f),
             colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                checkedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                uncheckedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+                checkedThumbColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                checkedTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
+                uncheckedBorderColor = Color.Transparent,
 
                 ),
             checked = soundState,

@@ -73,11 +73,11 @@ fun TimerScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Back to Setup",
-                        style = MaterialTheme.typography.displayLarge,
+                        text = stringResource(R.string.back_to_setup),
+                        style = MaterialTheme.typography.displayMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primaryContainer
                     )
                 },
                 navigationIcon = {
@@ -85,7 +85,7 @@ fun TimerScreen(
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primaryContainer
                         )
                     }
                 }
@@ -164,7 +164,7 @@ fun StateText(timerUiState: TimerUiState) {
                 }
             },
             style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primaryContainer
         )
     }
 }
@@ -176,7 +176,7 @@ fun RoundCounter(uiState: TimerUiState) {
     ) {
         Text(
             text = TimerUtil.displayRoundsOnTimerScreen(uiState.rounds, uiState.currentRound),
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.primaryContainer,
             style = MaterialTheme.typography.displayMedium,
         )
     }
@@ -196,12 +196,19 @@ fun Buttons(
     ) {
         IconButton(
             onClick = {
-                changeTimerRunning(!isTimerRunning)
-                viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
-                if (viewModel.player.isPlaying() && uiState.sound) {
-                    viewModel.player.pause()
-                } else if (!viewModel.player.isPlaying() && uiState.sound) {
-                    viewModel.player.play()
+                if (uiState.currentTimerType == TimerType.PREPARE) (
+                    return@IconButton
+                ) else if (uiState.current == 0) {
+                    return@IconButton
+                } else {
+                    changeTimerRunning(!isTimerRunning)
+                    viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
+
+                    if (viewModel.player.isPlaying() && uiState.sound) {
+                        viewModel.player.pause()
+                    } else if (!viewModel.player.isPlaying() && uiState.sound) {
+                        viewModel.player.play()
+                    }
                 }
             },
             modifier = Modifier.size(dimensionResource(id = R.dimen.timer_screen_width_size_elements))
@@ -213,7 +220,7 @@ fun Buttons(
                     Icons.Outlined.PlayCircle
                 },
                 contentDescription = "Play Button",
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
@@ -227,7 +234,7 @@ fun Buttons(
             Icon(
                 imageVector = Icons.Outlined.Replay,
                 contentDescription = "Restart Button",
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier.fillMaxSize(1f)
             )
         }

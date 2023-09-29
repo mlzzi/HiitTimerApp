@@ -72,7 +72,7 @@ fun Animation(
                         TimerType.ACTIVE -> painterResource(id = R.drawable.sprint)
                         else -> painterResource(id = R.drawable.resting)
                     },
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.primaryContainer,
                     contentDescription = "Icon",
                     modifier = Modifier.size(32.dp)
                 )
@@ -82,8 +82,8 @@ fun Animation(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = stringResource(R.string.elapsed_time),
-                    style = MaterialTheme.typography.displayMedium,
+                    text = stringResource(R.string.remaining_time),
+                    style = MaterialTheme.typography.displaySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
             }
@@ -260,20 +260,22 @@ fun AnimationCountDown(
 
 @Composable
 fun MiddleCircle() {
-    val color = MaterialTheme.colorScheme.background
+    val colorOne = MaterialTheme.colorScheme.background
+    val colorTwo = MaterialTheme.colorScheme.onBackground
+
     Canvas(modifier = Modifier.size(260.dp), onDraw = {
         drawCircle(
             brush = Brush.radialGradient(
                 colors = listOf(
-                    Color.Gray,
-                    Color.White
+                    colorTwo,
+                    colorOne
                 )
             )
         )
     })
     Canvas(modifier = Modifier.size(220.dp), onDraw = {
         drawCircle(
-            color = color
+            color = colorOne
         )
     })
 }
