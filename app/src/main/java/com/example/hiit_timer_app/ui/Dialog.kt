@@ -132,3 +132,41 @@ fun NumberPicker(
         onValueChange(number)
     }
 }
+
+@Composable
+fun RestartTimer(
+    onDismissRequest: () -> Unit,
+    onRestart: () -> Unit,
+    viewModel: TimerViewModel
+) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            title = { Text(text = "Restart Timer") },
+            text = {
+                Column {
+                    Text(
+                        text = "Do you wish to restart timer?",
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    onDismissRequest()
+                    viewModel.player.play()
+                }) {
+                    Text(text = "Cancel")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onRestart()
+                    onDismissRequest()
+                }) {
+                    Text(text = "Confirm")
+                }
+            }
+        )
+    }
+}

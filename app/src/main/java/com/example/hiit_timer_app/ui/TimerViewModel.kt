@@ -28,11 +28,12 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
     )
     val uiState: StateFlow<TimerUiState> = _uiState
 
-    val player by lazy {
-        AndroidAudioPlayer(application)
-    }
+    var player = AndroidAudioPlayer(getApplication())
 
     fun setTimerToStart() {
+        player.release()
+        player = AndroidAudioPlayer(getApplication())
+
         val active = _uiState.value.timeActive
         _uiState.update {
             it.copy(

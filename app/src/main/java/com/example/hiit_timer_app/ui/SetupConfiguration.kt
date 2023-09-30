@@ -1,19 +1,14 @@
 package com.example.hiit_timer_app.ui
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PauseCircle
-import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -31,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -91,14 +85,14 @@ fun TimerConfiguration(
             SetSwitch(
                 icon = R.drawable.sound,
                 text = "Sound",
-                soundState = timerUiState.sound,
+                switchState = timerUiState.sound,
                 onChangeSwitch = { switch -> viewModel.updateSoundEnabled(switch) }
             )
             Divider(color = MaterialTheme.colorScheme.onSurface, thickness = 1.dp)
             SetSwitch(
                 icon = R.drawable.vibration,
                 text = "Vibrate",
-                soundState = timerUiState.vibrate,
+                switchState = timerUiState.vibrate,
                 onChangeSwitch = { switch -> viewModel.updateVibrateEnabled(switch) }
             )
         }
@@ -205,7 +199,7 @@ fun SetRounds(
 fun SetSwitch(
     icon: Int,
     modifier: Modifier = Modifier,
-    soundState: Boolean,
+    switchState: Boolean,
     onChangeSwitch: (Boolean) -> Unit,
     text: String
 ) {
@@ -237,10 +231,10 @@ fun SetSwitch(
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 checkedTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
-                uncheckedBorderColor = Color.Transparent,
+                uncheckedBorderColor = MaterialTheme.colorScheme.primary,
 
                 ),
-            checked = soundState,
+            checked = switchState,
             onCheckedChange = { checked ->
                 onChangeSwitch(checked)
             }

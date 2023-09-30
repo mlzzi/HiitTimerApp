@@ -91,10 +91,9 @@ fun Animation(
 
         // Render countdown if is on, or the timer text if countdown is off
         if (
-            timerUiState.current == timerUiState.initial &&
-            timerUiState.currentTimerType == TimerType.PREPARE
+            timerUiState.current == timerUiState.initial
         ) {
-            if (!isTimerRunning) {
+            if (timerUiState.currentTimerType == TimerType.PREPARE) {
                 if (timerUiState.sound) {
                     CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
                 }

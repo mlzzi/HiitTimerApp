@@ -2,6 +2,7 @@ package com.example.hiit_timer_app.ui
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +30,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -38,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
@@ -46,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
@@ -81,7 +79,12 @@ fun TimerScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onBackPressed() }) {
+                    IconButton(onClick = {
+                        onBackPressed()
+                        viewModel.player.pause()
+                        Log.d("sound stoped", "${timerUiState.sound}")
+                        Log.d("sound stoped", "${viewModel.player.isPlaying()}")
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -190,15 +193,19 @@ fun Buttons(
     isTimerRunning: Boolean,
     changeTimerRunning: (Boolean) -> Unit
 ) {
+    var showDialogPicker by remember { mutableStateOf(false) }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.width(dimensionResource(id = R.dimen.timer_screen_width_buttons))
     ) {
+
+        // Pause/Resume Button
         IconButton(
             onClick = {
-                if (uiState.currentTimerType == TimerType.PREPARE) (
+                if (uiState.currentTimerType == TimerType.PREPARE) {
                     return@IconButton
-                ) else if (uiState.current == 0) {
+                } else if (uiState.current == 0) {
                     return@IconButton
                 } else {
                     changeTimerRunning(!isTimerRunning)
@@ -224,11 +231,36 @@ fun Buttons(
                 modifier = Modifier.fillMaxSize(1f)
             )
         }
-        
+
         Spacer(modifier = Modifier.weight(1f))
-        
+
+        // Launch Dialog if Restart Button Clicked
+        if (showDialogPicker) {
+            RestartTimer(
+                onDismissRequest = {
+                    showDialogPicker = false
+                    changeTimerRunning(!isTimerRunning)
+                                   },
+                onRestart = {
+                    changeTimerRunning(!isTimerRunning)
+                    viewModel.setTimerToStart()
+                },
+                viewModel = viewModel
+            )
+        }
+
+        // Replay Button
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                if (uiState.currentTimerType == TimerType.PREPARE) {
+                    return@IconButton
+                } else {
+                    viewModel.player.pause()
+                    showDialogPicker = true
+                    changeTimerRunning(!isTimerRunning)
+                    viewModel.updateProgress(uiState.current / uiState.initial.toFloat())
+                }
+            },
             modifier = Modifier.size(dimensionResource(id = R.dimen.timer_screen_width_size_elements))
         ) {
             Icon(
