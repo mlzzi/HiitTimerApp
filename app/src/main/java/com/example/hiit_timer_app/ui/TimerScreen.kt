@@ -245,7 +245,8 @@ fun Buttons(
                     changeTimerRunning(!isTimerRunning)
                     viewModel.setTimerToStart()
                 },
-                viewModel = viewModel
+                viewModel = viewModel,
+                timerUiState = uiState
             )
         }
 
@@ -256,6 +257,7 @@ fun Buttons(
                     return@IconButton
                 } else {
                     viewModel.player.pause()
+                    viewModel.cancelVibration()
                     showDialogPicker = true
                     changeTimerRunning(!isTimerRunning)
                     viewModel.updateProgress(uiState.current / uiState.initial.toFloat())

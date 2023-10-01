@@ -3,7 +3,6 @@ package com.example.hiit_timer_app.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -34,14 +33,12 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.hiit_timer_app.R
 import com.example.hiit_timer_app.RunningService
-import com.example.hiit_timer_app.audioplayer.AndroidAudioPlayer
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 
@@ -73,8 +70,6 @@ fun TimerApp(
                         viewModel.player.play()
                     }
                     navController.navigate("timer screen")
-                    Log.d("sound start", "${timerUiState.sound}")
-                    Log.d("sound start", "${viewModel.player.isPlaying()}")
                 },
                 viewModel = viewModel,
                 onBackPressed = { activity?.finishAffinity() }
@@ -85,7 +80,8 @@ fun TimerApp(
                 onBackPressed = {
                     navController.navigate("home")
                     viewModel.player.stop()
-                                },
+                    viewModel.cancelVibration()
+                },
                 timerUiState = timerUiState,
                 viewModel = viewModel,
                 context = context

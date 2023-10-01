@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +45,7 @@ fun Animation(
 ) {
     // Use a rememberUpdatedState composable function to store the formatted time in memory and to update the UI whenever the formatted time changes.
     val formattedTime by rememberUpdatedState(TimerUtil.formatTime(timerUiState.current))
+    var times by remember { mutableIntStateOf(timerUiState.current) }
 
     // Wrap the entire body of the composable function in a composable function.
     Box(
@@ -56,7 +56,8 @@ fun Animation(
             timerUiState = timerUiState,
             viewModel = viewModel,
             isTimerRunning = isTimerRunning,
-            context = context
+            context = context,
+            times = times
         )
 
         // Text of the elapsed time
@@ -98,7 +99,7 @@ fun Animation(
                     CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
                 }
                 if (timerUiState.vibrate) {
-                    Vibration(timerUiState)
+                    Vibration(viewModel = viewModel)
                 }
                 AnimationCountDown(
                     timerViewModel = viewModel,
@@ -115,7 +116,8 @@ fun SelectTimerType(
     timerUiState: TimerUiState,
     viewModel: TimerViewModel,
     isTimerRunning: Boolean,
-    context: Context
+    context: Context,
+    times: Int
 ) {
     when (timerUiState.currentTimerType) {
         TimerType.ACTIVE -> {
@@ -126,9 +128,9 @@ fun SelectTimerType(
                 modifier = Modifier.size(dimensionResource(id = R.dimen.animation_size)),
                 isTimerRunning = isTimerRunning
             )
-            if (timerUiState.current == 3) {
+            if (timerUiState.current <= 3) {
                 CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
-                Vibration(timerUiState)
+                Vibration(viewModel = viewModel)
             }
             if (timerUiState.current == 0) {
                 viewModel.handleTimerTypeFinish(timerUiState.timeRest)
@@ -146,7 +148,7 @@ fun SelectTimerType(
             )
             if (timerUiState.current <= 3) {
                 CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
-                Vibration(timerUiState)
+                Vibration(viewModel = viewModel)
             }
             if (timerUiState.current == 0) {
                 if (timerUiState.currentRound <= timerUiState.rounds) {
@@ -293,14 +295,8 @@ fun CountdownBeepPlayer(
 
 // Handle vibration feedback
 @Composable
-fun Vibration(timerUiState: TimerUiState) {
-    Column {
-        val mContext = LocalContext.current
-
-        if (timerUiState.vibrate) {
-            LaunchedEffect(Unit) {
-                TimerUtil.vibrate(mContext, timerUiState)
-            }
-        }
+fun Vibration(viewModel: TimerViewModel) {
+    LaunchedEffect(Unit) {
+        viewModel.vibrate()
     }
 }

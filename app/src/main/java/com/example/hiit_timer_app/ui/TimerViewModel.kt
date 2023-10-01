@@ -1,6 +1,9 @@
 package com.example.hiit_timer_app.ui
 
 import android.app.Application
+import android.content.Context
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.AndroidViewModel
 import com.example.hiit_timer_app.audioplayer.AndroidAudioPlayer
@@ -28,12 +31,39 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
     )
     val uiState: StateFlow<TimerUiState> = _uiState
 
-    var player = AndroidAudioPlayer(getApplication())
+    val player by lazy {
+        AndroidAudioPlayer(application)
+    }
+
+    @Suppress("DEPRECATION")
+    private val vibrator = application.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+    fun vibrate() {
+        val pattern = longArrayOf(0, 500, 500, 500, 500, 500, 500, 1000)
+        val amplitude = intArrayOf(
+            0,
+            VibrationEffect.DEFAULT_AMPLITUDE,
+            0,
+            VibrationEffect.DEFAULT_AMPLITUDE,
+            0,
+            VibrationEffect.DEFAULT_AMPLITUDE,
+            0,
+            VibrationEffect.DEFAULT_AMPLITUDE
+        )
+        val repeatIndex = -1 // Repeat the pattern once
+
+        val vibrationEffect1: VibrationEffect =
+            VibrationEffect.createWaveform(pattern, amplitude, repeatIndex)
+
+        vibrator.cancel()
+        vibrator.vibrate(vibrationEffect1)
+    }
+
+    fun cancelVibration() {
+        vibrator.cancel()
+    }
 
     fun setTimerToStart() {
-        player.release()
-        player = AndroidAudioPlayer(getApplication())
-
         val active = _uiState.value.timeActive
         _uiState.update {
             it.copy(

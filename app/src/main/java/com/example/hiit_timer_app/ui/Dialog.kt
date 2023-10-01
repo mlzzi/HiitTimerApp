@@ -137,7 +137,8 @@ fun NumberPicker(
 fun RestartTimer(
     onDismissRequest: () -> Unit,
     onRestart: () -> Unit,
-    viewModel: TimerViewModel
+    viewModel: TimerViewModel,
+    timerUiState: TimerUiState
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         AlertDialog(
@@ -154,7 +155,7 @@ fun RestartTimer(
             dismissButton = {
                 TextButton(onClick = {
                     onDismissRequest()
-                    viewModel.player.play()
+                    if (timerUiState.sound) viewModel.player.play()
                 }) {
                     Text(text = "Cancel")
                 }
