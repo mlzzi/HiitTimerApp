@@ -1,5 +1,6 @@
 package com.example.hiit_timer_app.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +53,7 @@ fun TimerConfiguration(
     ) {
         Column(
             modifier = modifier
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             SetTime(
@@ -86,14 +87,14 @@ fun TimerConfiguration(
                 icon = R.drawable.sound,
                 text = "Sound",
                 switchState = timerUiState.sound,
-                onChangeSwitch = { switch -> viewModel.updateSoundEnabled(switch) }
+                onChangeSwitch = { switch -> viewModel.updateSoundEnabled(switch) },
             )
             Divider(color = MaterialTheme.colorScheme.onSurface, thickness = 1.dp)
             SetSwitch(
                 icon = R.drawable.vibration,
                 text = "Vibrate",
                 switchState = timerUiState.vibrate,
-                onChangeSwitch = { switch -> viewModel.updateVibrateEnabled(switch) }
+                onChangeSwitch = { switch -> viewModel.updateVibrateEnabled(switch) },
             )
         }
     }
@@ -110,14 +111,19 @@ fun SetTime(
     var showDialogPicker by remember { mutableStateOf(false) }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = { showDialogPicker = true })
+            .height(55.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = "",
             tint = MaterialTheme.colorScheme.surfaceTint,
-            modifier = Modifier.align(Alignment.CenterVertically).size(24.dp)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .size(24.dp)
         )
         Spacer(modifier = modifier.width(8.dp))
         Text(
@@ -127,14 +133,12 @@ fun SetTime(
             color = MaterialTheme.colorScheme.primaryContainer
         )
         Spacer(modifier = modifier.weight(1f))
-        TextButton(onClick = { showDialogPicker = true }) {
-            Text(
-                text = TimerUtil.formatTime(time),
-                style = MaterialTheme.typography.displayMedium,
-                modifier = Modifier.align(Alignment.CenterVertically),
-                color = MaterialTheme.colorScheme.tertiaryContainer
-            )
-        }
+        Text(
+            text = TimerUtil.formatTime(time),
+            style = MaterialTheme.typography.displayMedium,
+            modifier = Modifier.align(Alignment.CenterVertically),
+            color = MaterialTheme.colorScheme.tertiaryContainer
+        )
         if (showDialogPicker) {
             TimePickerDialog(
                 onDismissRequest = { showDialogPicker = false },
@@ -159,6 +163,7 @@ fun SetRounds(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = { showDialogPicker = true })
             .height(70.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -167,7 +172,9 @@ fun SetRounds(
             painter = painterResource(id = icon),
             contentDescription = "",
             tint = MaterialTheme.colorScheme.surfaceTint,
-            modifier = Modifier.align(Alignment.CenterVertically).size(24.dp)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .size(24.dp)
         )
         Spacer(modifier = modifier.width(8.dp))
         Text(
@@ -201,11 +208,12 @@ fun SetSwitch(
     modifier: Modifier = Modifier,
     switchState: Boolean,
     onChangeSwitch: (Boolean) -> Unit,
-    text: String
+    text: String,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable( onClick = { onChangeSwitch(!switchState) })
             .height(70.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -213,7 +221,9 @@ fun SetSwitch(
             painter = painterResource(icon),
             contentDescription = "",
             tint = MaterialTheme.colorScheme.surfaceTint,
-            modifier = Modifier.align(Alignment.CenterVertically).size(24.dp)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .size(24.dp)
         )
         Spacer(modifier = modifier.width(8.dp))
         Text(
