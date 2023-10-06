@@ -41,12 +41,13 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun Picker(
     items: List<String>,
+    onItemSelected: (String) -> Unit,
     state: PickerState = rememberPickerState(),
     modifier: Modifier = Modifier,
     startIndex: Int,
     visibleItemsCount: Int = 3,
     textModifier: Modifier = Modifier,
-    textStyle: TextStyle
+    textStyle: TextStyle,
 ) {
 
     val visibleItemsMiddle = visibleItemsCount / 2
@@ -75,7 +76,10 @@ fun Picker(
         snapshotFlow { listState.firstVisibleItemIndex }
             .map { index -> getItem(index + visibleItemsMiddle) }
             .distinctUntilChanged()
-            .collect { item -> state.selectedItem = item }
+            .collect { item ->
+                state.selectedItem = item
+                onItemSelected(item)
+            }
     }
 
     Box(modifier = modifier) {
@@ -85,10 +89,10 @@ fun Picker(
             flingBehavior = flingBehavior,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .width(50.dp)
+                .width(60.dp)
                 .height(itemHeightDp * visibleItemsCount)
                 .fadingEdge(fadingEdgeGradient)
-                .padding(start = 22.dp)
+                .padding(start = 12.dp)
         ) {
             items(listScrollCount) { index ->
                 Text(
@@ -103,6 +107,8 @@ fun Picker(
                 )
             }
         }
+
+
 
         Divider(
             color = MaterialTheme.colorScheme.primaryContainer,

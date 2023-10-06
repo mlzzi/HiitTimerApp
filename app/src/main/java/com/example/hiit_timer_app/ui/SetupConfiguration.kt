@@ -62,19 +62,33 @@ fun TimerConfiguration(
                 time = timerUiState.timeActive,
                 changeTime = { time -> viewModel.updateTimeActive(time) },
                 modifier = modifier.semantics { contentDescription = "Active Button" },
+                uiState = timerUiState,
+                startForMinutes = 0,
+                endForMinutes = 2,
+                startForSeconds = 15,
+                endForSeconds = 59
             )
+
             Spacer(modifier = Modifier.height(8.dp))
             Divider(color = MaterialTheme.colorScheme.onSurface, thickness = 1.dp)
             Spacer(modifier = Modifier.height(8.dp))
+
             SetTime(
                 icon = R.drawable.resting,
                 text = "Rest",
                 time = timerUiState.timeRest,
                 changeTime = { time -> viewModel.updateTimeRest(time) },
-                modifier = modifier
+                modifier = modifier,
+                uiState = timerUiState,
+                startForMinutes = 0,
+                endForMinutes = 4,
+                startForSeconds = 10,
+                endForSeconds = 59
             )
+
             Spacer(modifier = Modifier.height(8.dp))
             Divider(color = MaterialTheme.colorScheme.onSurface, thickness = 1.dp)
+
             SetRounds(
                 icon = R.drawable.round,
                 text = "Rounds",
@@ -82,14 +96,18 @@ fun TimerConfiguration(
                 rounds = timerUiState.rounds,
                 modifier = modifier
             )
+
             Divider(color = MaterialTheme.colorScheme.onSurface, thickness = 1.dp)
+
             SetSwitch(
                 icon = R.drawable.sound,
                 text = "Sound",
                 switchState = timerUiState.sound,
                 onChangeSwitch = { switch -> viewModel.updateSoundEnabled(switch) },
             )
+
             Divider(color = MaterialTheme.colorScheme.onSurface, thickness = 1.dp)
+
             SetSwitch(
                 icon = R.drawable.vibration,
                 text = "Vibrate",
@@ -107,6 +125,11 @@ fun SetTime(
     time: Int,
     changeTime: (Int) -> Unit,
     modifier: Modifier,
+    uiState: TimerUiState,
+    startForMinutes: Int,
+    endForMinutes: Int,
+    startForSeconds: Int,
+    endForSeconds: Int
 ) {
     var showDialogPicker by remember { mutableStateOf(false) }
 
@@ -144,7 +167,12 @@ fun SetTime(
                 onDismissRequest = { showDialogPicker = false },
                 minutesInput = time / 60,
                 secondsInput = time % 60,
-                onTimeUpdate = { updatedTime -> changeTime(updatedTime) }
+                onTimeUpdate = { updatedTime -> changeTime(updatedTime) },
+                uiState = uiState,
+                startForMinutes = startForMinutes,
+                endForMinutes = endForMinutes,
+                startForSeconds = startForSeconds,
+                endForSeconds = endForSeconds
             )
         }
     }

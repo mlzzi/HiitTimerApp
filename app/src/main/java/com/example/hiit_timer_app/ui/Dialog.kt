@@ -1,29 +1,25 @@
 package com.example.hiit_timer_app.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.hiit_timer_app.ui.theme.Picker
@@ -35,37 +31,66 @@ fun TimePickerDialog(
     onTimeUpdate: (Int) -> Unit,
     minutesInput: Int,
     secondsInput: Int,
+    startForMinutes: Int,
+    startForSeconds: Int,
+    endForMinutes: Int,
+    endForSeconds: Int,
+    uiState: TimerUiState
 ) {
-    val minutes by remember { mutableIntStateOf(minutesInput) }
-    val seconds by remember { mutableIntStateOf(secondsInput) }
+    var minutes by remember { mutableIntStateOf(minutesInput) }
+    var seconds by remember { mutableIntStateOf(secondsInput) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         AlertDialog(
-            modifier = Modifier.height(300.dp),
+            modifier = Modifier.height(350.dp),
             onDismissRequest = onDismissRequest,
-            title = { Text(text = "Set Time", style = MaterialTheme.typography.displayMedium) },
+            title = {
+                Text(
+                    text = "Set Time",
+                    style = MaterialTheme.typography.displayMedium
+                )
+            },
             text = {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    Spacer(modifier = Modifier.width(50.dp))
+
                     Row(
                         modifier = Modifier
                             .padding(start = 5.dp)
                             .fillMaxWidth()
-                    ) {
-                        Text(text = "Minutes")
-                        Spacer(modifier = Modifier.width(35.dp))
-                        Text(text = "Seconds")
-                    }
-
-                    Spacer(modifier = Modifier.width(50.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
+                            .weight(0.3f),
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Spacer(modifier = Modifier.width(50.dp))
 
-                        PickerApp(startIndex = 10)
+                        Text(text = "Minutes")
+
+                        Spacer(modifier = Modifier.width(35.dp))
+
+                        Text(text = "Seconds")
+
+                        Spacer(modifier = Modifier.width(50.dp))
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.7f),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Spacer(modifier = Modifier.width(50.dp))
+
+                        NumberPicker(
+                            startNumber = startForMinutes,
+                            maxNumber = endForMinutes,
+                            startNumberToShow = minutes,
+                            onNumberSelected = { minutes = it }
+                        )
 
                         Text(
                             text = ":",
@@ -74,7 +99,12 @@ fun TimePickerDialog(
                             color = MaterialTheme.colorScheme.primaryContainer
                         )
 
-                        PickerApp(startIndex = seconds)
+                        NumberPicker(
+                            startNumber = startForSeconds,
+                            maxNumber = endForSeconds,
+                            startNumberToShow = seconds,
+                            onNumberSelected = { seconds = it }
+                        )
 
                         Spacer(modifier = Modifier.width(50.dp))
 
@@ -82,35 +112,29 @@ fun TimePickerDialog(
                 }
 
             },
+            dismissButton = {
+                TextButton(onClick = {
+                    onDismissRequest()
+                }) {
+                    Text(
+                        text = "CANCEL",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    )
+                }
+            },
             confirmButton = {
                 TextButton(onClick = {
                     val time = minutes * 60 + seconds
                     onTimeUpdate(time)
                     onDismissRequest()
-                    Log.d("SaveButtonClicked", "Save Button was clicked!")
                 }) {
-                    Text(text = "Save", style = MaterialTheme.typography.displayMedium)
+                    Text(
+                        text = "SAVE",
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
-        )
-    }
-}
-
-@Composable
-fun PickerApp(
-    startIndex: Int
-) {
-    Column() {
-
-        val pickerItems = remember { (1..59).map { it.toString() } }
-        val pickerState = rememberPickerState()
-        Picker(
-            state = pickerState,
-            items = pickerItems,
-            visibleItemsCount = 3,
-            startIndex = startIndex,
-            textModifier = Modifier.padding(8.dp),
-            textStyle = MaterialTheme.typography.labelLarge
         )
     }
 }
@@ -124,63 +148,130 @@ fun RoundDialog(
     var rounds by remember { mutableIntStateOf(roundsInput) }
     Dialog(onDismissRequest = onDismissRequest) {
         AlertDialog(
+            modifier = Modifier.height(350.dp),
             onDismissRequest = onDismissRequest,
-            title = { Text(text = "Set Time") },
+            title = {
+                Text(
+                    text = "Set Time",
+                    style = MaterialTheme.typography.displayMedium
+                )
+            },
             text = {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .fillMaxWidth()
+                            .weight(0.3f),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Spacer(modifier = Modifier.width(50.dp))
+
+                        Text(text = "Rounds")
+
+                        Spacer(modifier = Modifier.width(50.dp))
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.7f),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         NumberPicker(
-                            value = rounds.toInt(),
-                            onValueChange = { rounds = it.toInt() },
-                            minValue = 1,
-                            maxValue = 10
+                            startNumber = 4,
+                            maxNumber = 10,
+                            startNumberToShow = rounds,
+                            onNumberSelected = { rounds = it }
                         )
                     }
                 }
             },
+            dismissButton = {
+                TextButton(onClick = {
+                    onDismissRequest()
+                }) {
+                    Text(
+                        text = "CANCEL",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    )
+                }
+            },
             confirmButton = {
                 TextButton(onClick = {
-                    onRoundUpdate(rounds.toInt())
+                    onRoundUpdate(rounds)
                     onDismissRequest()
-                    Log.d("SaveButtonClicked", "Save Button was clicked!")
                 }) {
-                    Text(text = "Save")
+                    Text(
+                        text = "SAVE",
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
         )
     }
 }
 
-//Picker Antigo
 @Composable
 fun NumberPicker(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    minValue: Int,
-    maxValue: Int
+    startNumber: Int,
+    maxNumber: Int,
+    startNumberToShow: Int,
+    onNumberSelected: (Int) -> Unit
 ) {
-    var number by remember { mutableIntStateOf(value) }
+    Column(
+    ) {
+        val pickerItems = remember { (startNumber..maxNumber).map { it.toString() } }
+        val pickerState = rememberPickerState()
 
-    Column {
-        Button(onClick = { if (number > minValue) number -= 1 }) {
-            Text(text = "-", textAlign = TextAlign.Center)
-        }
-
-        Text(
-            text = number.toString().padStart(2, '0'),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = 4.dp)
+        Picker(
+            state = pickerState,
+            items = pickerItems,
+            onItemSelected = { selectedNumber ->
+                onNumberSelected(selectedNumber.toInt())
+            },
+            startIndex = pickerItems.indexOf(startNumberToShow.toString()),
+            textModifier = Modifier.padding(8.dp),
+            textStyle = MaterialTheme.typography.labelLarge,
         )
-
-        Button(onClick = { if (number < maxValue) number += 1 }) {
-            Text(text = "+", textAlign = TextAlign.Center)
-        }
-    }
-
-    LaunchedEffect(number) {
-        onValueChange(number)
     }
 }
+
+////Picker Antigo
+//@Composable
+//fun NumberPicker(
+//    value: Int,
+//    onValueChange: (Int) -> Unit,
+//    minValue: Int,
+//    maxValue: Int
+//) {
+//    var number by remember { mutableIntStateOf(value) }
+//
+//    Column {
+//        Button(onClick = { if (number > minValue) number -= 1 }) {
+//            Text(text = "-", textAlign = TextAlign.Center)
+//        }
+//
+//        Text(
+//            text = number.toString().padStart(2, '0'),
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier.padding(vertical = 4.dp)
+//        )
+//
+//        Button(onClick = { if (number < maxValue) number += 1 }) {
+//            Text(text = "+", textAlign = TextAlign.Center)
+//        }
+//    }
+//
+//    LaunchedEffect(number) {
+//        onValueChange(number)
+//    }
+//}
 
 @Composable
 fun RestartTimer(
