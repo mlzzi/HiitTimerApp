@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.hiit_timer_app.R
+import com.example.hiit_timer_app.dialog.RestartTimer
 import com.example.hiit_timer_app.model.TimerType
 import com.example.hiit_timer_app.util.TimerUtil
 
@@ -213,7 +214,7 @@ fun Buttons(
 
                     if (viewModel.player.isPlaying() && uiState.sound) {
                         viewModel.player.pause()
-                    } else if (!viewModel.player.isPlaying() && uiState.sound) {
+                    } else if (!viewModel.player.isPlaying() && uiState.sound && uiState.current <= 3) {
                         viewModel.player.play()
                     }
                 }

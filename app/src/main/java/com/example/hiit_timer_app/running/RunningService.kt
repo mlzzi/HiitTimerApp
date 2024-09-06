@@ -1,9 +1,10 @@
-package com.example.hiit_timer_app
+package com.example.hiit_timer_app.running
 
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.example.hiit_timer_app.R
 
 class RunningService : Service() {
 

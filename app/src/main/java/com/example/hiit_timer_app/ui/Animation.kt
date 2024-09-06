@@ -99,7 +99,7 @@ fun Animation(
                     CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
                 }
                 if (timerUiState.vibrate) {
-                    Vibration(viewModel = viewModel)
+                    Vibration(viewModel = viewModel, uiState = timerUiState)
                 }
                 AnimationCountDown(
                     timerViewModel = viewModel,
@@ -130,7 +130,7 @@ fun SelectTimerType(
             )
             if (timerUiState.current <= 3) {
                 CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
-                Vibration(viewModel = viewModel)
+                Vibration(viewModel = viewModel, uiState = timerUiState)
             }
             if (timerUiState.current == 0) {
                 viewModel.handleTimerTypeFinish(timerUiState.timeRest)
@@ -148,7 +148,7 @@ fun SelectTimerType(
             )
             if (timerUiState.current <= 3) {
                 CountdownBeepPlayer(timerUiState, viewModel, isTimerRunning)
-                Vibration(viewModel = viewModel)
+                Vibration(viewModel = viewModel, uiState = timerUiState)
             }
             if (timerUiState.current == 0) {
                 if (timerUiState.currentRound <= timerUiState.rounds) {
@@ -295,8 +295,13 @@ fun CountdownBeepPlayer(
 
 // Handle vibration feedback
 @Composable
-fun Vibration(viewModel: TimerViewModel) {
-    LaunchedEffect(Unit) {
-        viewModel.vibrate()
+fun Vibration(
+    viewModel: TimerViewModel,
+    uiState: TimerUiState
+) {
+    if (uiState.vibrate) {
+        LaunchedEffect(Unit) {
+            viewModel.vibrate()
+        }
     }
 }

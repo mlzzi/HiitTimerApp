@@ -127,3 +127,38 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 }
+
+/*
+lets start by the arquitecture. My files are dispose as this:
+
+com.example.hiit_timer_app
+    audioplayer
+        AndroidAudioPlayer.kt
+        AudioPlayer.kt
+    dialog
+        Dialog.kt
+        NumberPickerDialog.kt
+    model
+        TimerType.kt
+    running
+        RunningApp.kt
+        RunningService.kt
+    ui
+        theme
+            Color.kt
+            Shape.kt
+            Theme.kt
+            Type.kt
+        Animation.kt
+        SetupConfiguration.kt
+        TimerApp.kt
+        TimerScreen.kt
+        TimerUiState.kt
+        TimerViewModel.kt
+    util
+        TimerUtil.kt
+        VibrationUtil.kt
+        Vibrator.kt
+    MainActivity.kt
+
+ */

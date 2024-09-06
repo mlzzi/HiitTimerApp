@@ -1,16 +1,10 @@
 package com.example.hiit_timer_app
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.hiit_timer_app.ui.TimerConfiguration
-import com.example.hiit_timer_app.ui.TimerUiState
-import com.example.hiit_timer_app.ui.TimerViewModel
 import com.example.hiit_timer_app.util.TimerUtil.calculateSpinProgress
 import com.example.hiit_timer_app.util.TimerUtil.formatTime
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.junit.Rule
-import org.junit.runner.RunWith
 
 /**
  * Example local unit test, which will execute on the development machine (host).

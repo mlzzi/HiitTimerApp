@@ -32,6 +32,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.hiit_timer_app.R
+import com.example.hiit_timer_app.dialog.RoundDialog
+import com.example.hiit_timer_app.dialog.TimePickerDialog
 import com.example.hiit_timer_app.util.TimerUtil
 
 @Composable

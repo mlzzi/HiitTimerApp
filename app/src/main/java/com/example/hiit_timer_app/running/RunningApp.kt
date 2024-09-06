@@ -1,4 +1,4 @@
-package com.example.hiit_timer_app
+package com.example.hiit_timer_app.running
 
 import android.app.Application
 import android.app.NotificationChannel
