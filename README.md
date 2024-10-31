@@ -53,5 +53,5 @@ I plan to further improve this application by exploring advanced features such a
 
 ## Author
 
-- LinkedIn - [Your Name](https://www.linkedin.com/in/muriloluzzi/)
+- LinkedIn - [Murilo Luzzi](https://www.linkedin.com/in/muriloluzzi/)
 - GitHub - [@mlzzi](https://github.com/mlzzi)
